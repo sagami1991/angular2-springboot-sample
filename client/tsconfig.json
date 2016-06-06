@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+				"module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true 
+    },
+    "files": [
+        "typings/index.d.ts",
+				"src/custom-typings.d.ts",
+        "src/main.ts"
+    ]
+}

@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      database: yakiu
+---
+spring:
+  profiles: dev
+  thymeleaf:
+    cache: false
+app:
+  host-name: localhost
+---
+spring:
+  profiles: prod
+app:
+  host-name: 128.199.129.51

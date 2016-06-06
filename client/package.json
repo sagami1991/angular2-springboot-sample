@@ -1,0 +1,40 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "angular2 client side",
+  "main": "index.js",
+  "scripts": {
+    "server": "http-server dist -p 3001",
+    "server:dev": "webpack-dev-server --config webpack.config.dev.js --watch --progress --colors",
+    "build:prod": "webpack --config webpack.config.prod.js --progress --colors"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "awesome-typescript-loader": "^0.17.0",
+    "css-loader": "^0.23.1",
+    "file-loader": "^0.8.5",
+    "http-server": "^0.9.0",
+    "node-sass": "^3.7.0",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^3.2.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack-merge": "^0.13.0"
+  },
+  "dependencies": {
+    "@angular/common": "2.0.0-rc.1",
+    "@angular/compiler": "2.0.0-rc.1",
+    "@angular/core": "2.0.0-rc.1",
+    "@angular/http": "2.0.0-rc.1",
+    "@angular/platform-browser": "2.0.0-rc.1",
+    "@angular/platform-browser-dynamic": "2.0.0-rc.1",
+    "@angular/router": "2.0.0-rc.1",
+    "@angular/router-deprecated": "2.0.0-rc.1",
+    "@angular/upgrade": "2.0.0-rc.1",
+    "core-js": "^2.3.0",
+    "rxjs": "5.0.0-beta.6",
+    "zone.js": "^0.6.6"
+  }
+}

@@ -1,0 +1,11 @@
+mvn package -Drun.profiles=prod
+#立ち上げ
+nohup java -jar -Dspring.profiles.active=prod target/yakiu-0.0.1-SNAPSHOT.jar &
+
+#クライアント側立ち上げ
+forever start ./node_modules/http-server/bin/http-server -p 3002 -d false
+
+#nginx設定
+/etc/nginx/conf.d/default.conf
+#リロード
+nginx

@@ -1,0 +1,64 @@
+
+body{
+	padding-top: 55px;
+	overflow: visible;
+	// font-family: "Hiragino Kaku Gothic ProN","Meiryo";
+}
+
+h2{
+	font-weight: 500;
+	margin-bottom: 10px;
+}
+
+.container{
+	overflow-y: auto;
+	padding: 20px 0;
+}
+
+*{
+	box-sizing: border-box;
+}
+
+a{
+	text-decoration: none;
+}
+
+
+//画像系、webpackのraw-loaderだとURLエンコードしてくれないので
+//styleで読むこむここにとりあえず書く
+.title{	background: url("./img/title.png");}
+.arrow-bottom:after {	background: url("./img/arrow-bottom.png")}
+//借金、貯金
+.siroboshi{background: url("./img/siro.png")}
+.kuroboshi{background: url("./img/kuro.png")}
+//チームアイコン
+.team-g {background: url("./img/giants.png")}
+.team-t {background: url("./img/tigers.png")}
+.team-d {background: url("./img/drangons.png")}
+.team-db {background: url("./img/dena.png")}
+.team-c {background: url("./img/carp.png")}
+.team-s {background: url("./img/swalows.png")}
+
+//チームアイコン
+.team-h {background: url("./img/hokus.png")}
+.team-m {background: url("./img/marins.png")}
+.team-f {background: url("./img/fgiters.png")}
+.team-l {background: url("./img/lions.png")}
+.team-bs {background: url("./img/buffalos.png")}
+.team-e {background: url("./img/eagles.png")}
+
+.icon-m {
+	content: "";
+	width: 32px;
+	min-width: 32px;
+	height: 32px;
+	min-height: 32px;
+}
+.icon-s-after:after {
+	content: "";
+	width: 16px;
+	min-width: 16px;
+	height: 16px;
+	min-height: 16px;
+}
+
