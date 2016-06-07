@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.myapp.domain.BoardGenre;
+import com.myapp.domain.ItaranBoard;
+import com.myapp.repository.SettingRepository;
 import com.myapp.repository.TeamRankRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,41 +36,37 @@ import com.myapp.domain.Tyokin;
 @SpringApplicationConfiguration(classes = App.class)
 public class ScrapingTest {
     @Autowired
-    TeamRankRepository repository;
+    private SettingRepository settingRepository;
 
-    @Value("${spring.profiles}")
-    private String profile;
-
+    private static final String RANK_URL = "http://menu.2ch.net/bbsmenu.html";
     @Test
-    public void mongoTest() {
-        System.out.println(profile);
-        System.out.println(repository.findLastUpdated("ce"));
+    public void mongoTest() throws IOException {
+        List<BoardGenre> genres = new ArrayList<>();
+        Document doc = Jsoup.connect(RANK_URL).get();
+        final Elements elms = doc.select("a, b");
+        for (Element elm: elms) {
+            if(elm.tagName().equals("b")) {
+                BoardGenre genre = new BoardGenre();
+                genre.setName(elm.text());
+                genre.setBoards(new ArrayList<>());
+                genres.add(genre);
+            }
+
+            if(elm.tagName().equals("a") && genres.size() > 0){
+                Matcher m = Pattern.compile("http://(.+?)\\.(.+?)/(.+?)/").matcher(elm.attr("href"));
+                if(m.find()) {
+                    ItaranBoard board = new ItaranBoard();
+                    board.setName(elm.text());
+                    board.setDomain(m.group(2));
+                    board.setServer(m.group(1));
+                    board.setBoard(m.group(3));
+                    genres.get(genres.size() - 1).getBoards().add(board);
+                }
+            }
+        }
+        genres.remove(genres.size() - 1);
+        System.out.println(genres);
+        settingRepository.save(BoardGenre.id, genres);
     }
 
-}
-//enumのつくりかた
-enum Team {
-    G("巨人"),
-    T("阪神"),
-    C("広島"),
-    DB("横浜"),
-    D("中日"),
-    S("東京"),
-    H("便器"),
-    M("千葉"),
-    F("日公"),
-    L("西武"),
-    Bs("檻牛"),
-    E("楽天");
-
-
-    private String label;
-
-    Team(String label) {
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
 }

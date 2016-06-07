@@ -14,11 +14,12 @@ import {ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES} from "@angular/router-
 import {Header} from "./components/Header";
 import {Home} from "./components/Home";
 
+require('bootstrap-loader');
 //css scssローダーでcssへ→cssローダー→styleローダーでstyleタグへ
 require("!style!css!sass!./main.scss");
 
 
-if( ENV === "prod"){
+if (ENV === "prod") {
 	enableProdMode();
 }
 

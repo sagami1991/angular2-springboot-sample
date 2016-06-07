@@ -7,6 +7,7 @@ package com.myapp.cron;
 import com.myapp.config.AppConfig;
 import com.myapp.domain.TeamRank;
 import com.myapp.domain.Tyokin;
+import com.myapp.repository.SettingRepository;
 import com.myapp.repository.TeamRankRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,6 +30,9 @@ import java.util.regex.Pattern;
 public class Scraping {
     @Autowired
     TeamRankRepository repository;
+
+    @Autowired
+    private SettingRepository settingRepository;
 
     @Value("${spring.profiles}")
     private String profile;
@@ -54,16 +58,14 @@ public class Scraping {
         ceLeagu.setUpdated(fetchUpdated(CE_ID));
 
         //パリーグ
-        TeamRank paLeagu = new TeamRank();
-        paLeagu.setType("pa");
-        paLeagu.setTeams(fetchTyokin(PA_ID));
-        paLeagu.setUpdated(fetchUpdated(PA_ID));
-        repository.upsertByUpdatedAndType(ceLeagu);
-        repository.upsertByUpdatedAndType(paLeagu);
+//        TeamRank paLeagu = new TeamRank();
+//        paLeagu.setType("pa");
+//        paLeagu.setTeams(fetchTyokin(PA_ID));
+//        paLeagu.setUpdated(fetchUpdated(PA_ID));
+//        repository.upsertByUpdatedAndType(ceLeagu);
+//        repository.upsertByUpdatedAndType(paLeagu);
+        settingRepository.save("ceRanking", ceLeagu);
 
-        System.out.println("スクレイピングしました");
-        System.out.println(ceLeagu);
-        System.out.println(paLeagu);
     }
 
     /** チームごとの貯金とる */

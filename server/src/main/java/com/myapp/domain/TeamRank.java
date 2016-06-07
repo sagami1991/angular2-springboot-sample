@@ -14,10 +14,7 @@ import java.util.List;
  * Created by m on 2016/05/29.
  */
 @Data
-@Document(collection = "tyokin")
 public class TeamRank {
-    @Id
-    private String id;
     @Pattern(regexp = "[ce|pa]")
     private String type;
     @NotNull

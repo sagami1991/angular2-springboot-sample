@@ -1,12 +1,13 @@
 package com.myapp;
 
-import com.mongodb.Mongo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.mongodb.Mongo;
 
 /**
  * Created by m on 2016/05/29.
@@ -25,6 +26,6 @@ public class App extends SpringBootServletInitializer {
 
     @Bean
     MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongo(), "yakiu");
+        return new MongoTemplate(mongo(), "nichan");
     }
 }
