@@ -1,60 +1,51 @@
 import {Component} from "@angular/core";
-import {RouteParams} from "@angular/router-deprecated";
-import {LeagueInfo, TeamRank, Tyokin} from "../interfaces";
-import {Http, Headers} from "@angular/http";
-import {NumberPipe, DateFormatPipe} from "../util/Util";
+import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {LeagueInfo, TeamRank, Tyokin, Board} from "../interfaces";
+import {Http, Headers, URLSearchParams} from "@angular/http";
+import {EmojiPipe} from "../util/Util";
 
-export class LeagueConfig {
-	public static leagueConfig: LeagueInfo[] = [
-		{
-			name: "ce",
-			param: ["", "ce"],
-			title: "セリーグ"
-		}, {
-			name: "pa",
-			param: ["pa"],
-			title: "パリーグ"
-		}
-	];
-	
-	public static getLeagueObj(str: string) {
-		return this.leagueConfig.find((league => league.param.indexOf(str) !== -1 ));
-	}
-}
 
 @Component({
 	template:`
 	<h2>
-		{{leagueInfo.title}}ランキング
+		人気の板
 	</h2>
-	<div *ngIf="teamRank">
-		<div *ngFor="let team of teamRank.teams; let i = index" class="rank-row">
-			<div class="juni">{{i + 1}}位</div>
-			<div class="syakkin-row">
-				<div class="icon-m kuroboshi" *ngFor="let hoge of team.tyokin * -1 | number"></div>
-			</div>
-			<div class="team-icon-wraper">
-				<div class="icon-m team-{{team.name.toLowerCase()}}"></div>
-			</div>
-			<div class="tyokin-row">
-				<div class="icon-m siroboshi" *ngFor="let hoge of team.tyokin | number"></div>
-			</div>
-		</div>
-		更新日時 {{teamRank.updated | dateToString }}
+	<ul *ngIf="popBoards">
+		<li *ngFor="let board of popBoards">
+			<a [routerLink]="['/Board', {id: board.id}]">{{board.name}}</a>
+		</li>
+	</ul>
+	<div [innerHTML]="emoji | toEmoji">
 	</div>
+
 	`,
 	styles: [require("./home.scss")],
-	pipes:[NumberPipe, DateFormatPipe]
+	directives: [ROUTER_DIRECTIVES],
+	pipes: [EmojiPipe]
 })
 export class Home {
-	private leagueInfo: LeagueInfo;
-	private teamRank: TeamRank;
+	private static popularBoardNames = ["なんでも実況J", "ニュー速(嫌儲)", "ニュー速VIP", "ニュース速報+", "スマホアプリ",
+	"野球ch", "難民", "芸スポ速報+"];
+	private popBoards: Board[];
+	private emoji = "&#127918;";
 	constructor(private params: RouteParams,
 							private http: Http) {};
 	private ngOnInit() {
-		this.leagueInfo = LeagueConfig.getLeagueObj(this.params.get("league"));
-		this.http.get(`api/rank/${this.leagueInfo.name}`)
+		let params = new URLSearchParams();
+		params.set("names", Home.popularBoardNames.join(","));
+		this.http.get(`api/boards/bynames`, {search: params})
 		.map(res => res.json())
-		.subscribe(data => this.teamRank = data);
+		.subscribe(data => {
+			this.popBoards = [];
+			//並び替え
+			Home.popularBoardNames.forEach((name) => {
+				const tmp = (<Board[]> data).filter((board) => board.name === name)[0];
+				if (tmp) {
+					this.popBoards.push(tmp);
+				}
+			});
+
+
+			});
 	}
 }

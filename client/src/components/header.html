@@ -1,16 +1,35 @@
 <div class="header">
-	<div class="menubar"  >
+	<div class="menubar">
 		<!-- タイトル -->
-		<div class = "title"></div>
+		<div class = "title">welcom to underground</div>
 		<!-- トグルボタン -->
 		<div [class.active]="isMenuActive" 
-		class="open-menu-button select-leagu icon-s-after arrow-bottom" 
-		(click)="toggleMenu()" >{{leagueInfo.title}}</div>
+		class="" 
+		(click)="toggleMenu()" ></div>
 	</div>
 	<!-- コンテンツ -->
 	<div class = "contents"
 	[class.active]="isMenuActive" >
-		<a [class.active]="isActive('ce')" [routerLink]="['/Home',{league: 'ce'}]">セリーグ</a>
-		<a [class.active]="isActive('pa')" [routerLink]="['/Home',{league: 'pa'}]">パリーグ</a>
+		<!--<a [class.active]="isActive('ce')" [routerLink]="['/Home',{league: 'ce'}]">セリーグ</a>
+		<a [class.active]="isActive('pa')" [routerLink]="['/Home',{league: 'pa'}]">パリーグ</a>-->
 	</div>
+</div>
+<div class="side-header" [class.active]="isSideMenuActive">
+	<div class="toggle-button side" [class.active]="isSideMenuActive"
+		(click)="isSideMenuActive = !isSideMenuActive">
+		<span></span>
+		<span></span>
+	</div>
+	<a href="/" class="genre-wrapeer">
+		<span class="glyphicon glyphicon-bed"></span>
+		<span class="genre-text">板一覧</span>
+	</a>
+	<a href="#"  class="genre-wrapeer">
+		<span class="glyphicon glyphicon-tree-deciduous"></span>
+		<span class="genre-text">板</span>
+	</a>
+	<a href="#"  class="genre-wrapeer">
+		<span class="glyphicon glyphicon-piggy-bank"></span>
+		<span class="genre-text">スレッド</span>
+	</a>
 </div>

@@ -1,4 +1,4 @@
-package com.myapp.domain;
+package com.myapp.domain.itaran;
 
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,5 +12,5 @@ import java.util.List;
 public class BoardGenre {
     static final public String id = "boardlist";
     private String name;
-    private List<ItaranBoard> boards;
+    private List<Board> boards;
 }

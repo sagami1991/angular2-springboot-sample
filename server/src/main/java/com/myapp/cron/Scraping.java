@@ -1,14 +1,13 @@
 package com.myapp.cron;
 
-/**
- * 定期的にスクレイピングする
- */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.myapp.config.AppConfig;
-import com.myapp.domain.TeamRank;
-import com.myapp.domain.Tyokin;
-import com.myapp.repository.SettingRepository;
-import com.myapp.repository.TeamRankRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,18 +17,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.myapp.domain.yakiu.TeamRank;
+import com.myapp.domain.yakiu.Tyokin;
+import com.myapp.repository.SettingRepository;
 
 @Component
 public class Scraping {
-    @Autowired
-    TeamRankRepository repository;
 
     @Autowired
     private SettingRepository settingRepository;

@@ -6,6 +6,7 @@
   "scripts": {
     "server": "http-server dist -p 3001",
     "server:dev": "webpack-dev-server --config webpack.config.dev.js --watch --progress --colors",
+    "build:dev": "webpack --config webpack.config.dev.js --watch --progress --colors",
     "build:prod": "webpack --config webpack.config.prod.js --progress --colors"
   },
   "keywords": [],
@@ -13,8 +14,10 @@
   "license": "ISC",
   "devDependencies": {
     "awesome-typescript-loader": "^0.17.0",
-		"bootstrap-loader": "^1.0.10",
+    "bootstrap-loader": "^1.0.10",
+    "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.23.1",
+    "expose-loader": "^0.7.1",
     "file-loader": "^0.8.5",
     "http-server": "^0.9.0",
     "node-sass": "^3.7.0",
@@ -37,6 +40,10 @@
     "@angular/upgrade": "2.0.0-rc.1",
     "bootstrap-sass": "^3.3.6",
     "core-js": "^2.3.0",
+    "emoji": "^0.3.2",
+    "emojione": "^2.2.2",
+    "jquery": "^2.2.4",
+    "lodash": "^4.13.1",
     "rxjs": "5.0.0-beta.6",
     "zone.js": "^0.6.6"
   }

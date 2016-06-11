@@ -1,4 +1,6 @@
-package com.myapp.domain;
+package com.myapp.domain.itaran;
+
+import org.springframework.data.annotation.Id;
 
 import lombok.Data;
 
@@ -6,7 +8,10 @@ import lombok.Data;
  * Created by m on 2016/06/06.
  */
 @Data
-public class ItaranBoard {
+public class Board {
+	@Id
+	private String id;
+	private String genre;
     private String name;
     private String domain;
     private String server;

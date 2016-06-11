@@ -1,4 +1,4 @@
-package com.myapp.domain;
+package com.myapp.domain.yakiu;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

@@ -6,7 +6,7 @@ const commonConfig = require('./webpack.config.js');
 module.exports = webpackMerge(commonConfig, {
 	plugins: [
 		new DefinePlugin({
-			"ENV": "prod"
+			"ENV": `"prod"`
 		}),
 		new webpack.optimize.UglifyJsPlugin({
 			 beautify: false,

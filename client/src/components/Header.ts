@@ -2,7 +2,6 @@ import {Component, ElementRef} from "@angular/core";
 import {ROUTER_DIRECTIVES, Router} from "@angular/router-deprecated";
 import {Location} from '@angular/common';
 import {LeagueInfo} from "../interfaces";
-import {LeagueConfig} from "./Home";
 
 @Component({
 	selector: "app-header",
@@ -14,6 +13,7 @@ import {LeagueConfig} from "./Home";
 	directives: [ROUTER_DIRECTIVES]
 })
 export class Header {
+	private isSideMenuActive: boolean;
 	/** メニュー開いてたらtrue */
 	private isMenuActive: boolean;
 	/** 現在開いているリーグ */
@@ -24,8 +24,6 @@ export class Header {
 							private location:Location) {}
 	
 	private ngOnInit(): void {
-		this.updateLeagueInfo();
-		this.router.subscribe(() => this.updateLeagueInfo());
 	}
 	/** メニュー開くボタン以外クリックされたらメニュー閉じる */
 	private onClick(event : Event) {
@@ -37,7 +35,6 @@ export class Header {
 	
 	/** URLを元にリーグ情報更新 */
 	private updateLeagueInfo() {
-		this.leagueInfo = LeagueConfig.getLeagueObj(this.getCtxPath());
 	}
 	/** コンテキストパスを取る */
 	private getCtxPath(): string {
@@ -49,7 +46,7 @@ export class Header {
 		return path === this.leagueInfo.name;
 	}
 	/** メニューを出したり隠したり */
-	private toggleMenu(): void {
+	private toggleMenu(flag: boolean): void {
 		this.isMenuActive = !this.isMenuActive;
 	}
 	/** メニューを隠す */
