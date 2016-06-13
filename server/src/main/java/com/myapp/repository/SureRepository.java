@@ -21,12 +21,18 @@ public class SureRepository {
 	@Autowired
     MongoTemplate mongo;
 	
+	public Sure findById(String id) {
+		Query q = query(where("id").is(id));
+		return mongo.findOne(q, Sure.class, collection);
+	}
+	
 	public List<Sure> findByBid(String boardId) {
 		Query q = query(where("bid").is(boardId).and("otiteru").is(false));
 		return mongo.find(q, Sure.class, collection);
 	}
 	
 	public void upsertBatch(List<Sure> sures) {
+		if(sures == null || sures.size() < 1) new RuntimeException("スレなし");
 		String boardId = sures.get(0).getBid();
 		List<String> datNoList = new ArrayList<>();
 		for (Sure sure : sures) {

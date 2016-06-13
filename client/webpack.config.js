@@ -1,3 +1,5 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
 	entry: {
 		"main": "./src/main.ts"
@@ -21,7 +23,7 @@ module.exports = {
 			{ test: /\.html$/, loader: 'raw'},
 			{ test: /\.scss$/, loaders: ["raw","sass"] },
 			{ test: /\.png$/, loader: "url" },
-			//bootstrap用
+			//bootstrapのフォント用
 			{
         test: /\.(woff|woff2)$/,
         loader: 'url?limit=10000&mimetype=application/font-woff'
@@ -37,6 +39,12 @@ module.exports = {
       }
     ]
   },
+	plugins: [
+		new CopyWebpackPlugin([
+			//絵文字画像コピー
+			{ from: 'node_modules/emojione/assets/svg', to: 'emojione/assets/svg' },
+		])
+	],
 	node: {
     global: 'window',
     crypto: 'empty',

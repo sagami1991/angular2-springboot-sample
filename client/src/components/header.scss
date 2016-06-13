@@ -53,24 +53,7 @@ $sidebar-width: 40px;
 	}
 }
 
-
-
-
-
-
-//ヘッダー
-.header{
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: flex-end;
-	top:0;
-	position: fixed;
-	left: $sidebar-width;
-	right: 0;
-}
-
-//トグルボタン（右と左かねよう）
+//トグルボタン
 .toggle-button {
 	border: 1px solid rgba(0,0,0,0.1);
 	border-radius: 3px;
@@ -78,106 +61,23 @@ $sidebar-width: 40px;
 	height: 32px;
 	cursor: pointer;
 	&.active, &:hover { background-color: #E0E0E0 }
-	//サイドバー用
-	&.side {
-		span{
-			position: absolute;
-			display: block;
-			top: 2px;
+	span{
+		position: absolute;
+		display: block;
+		top: 2px;
+		width: 2px;
+		height: 16px;
+		background-color: rgba(0,0,0,0.7);
+		transition: all 250ms ease-in-out;
+		&:not(.active) {
 			left: 50%;
-			width: 2px;
-			height: 16px;
-			background-color: rgba(0,0,0,0.7);
-			transition: all 250ms ease-in-out;
 			&:nth-child(1){transform: rotate(-45deg);}
 			&:nth-child(2){transform:translateY(calc(50% + 2px)) rotate(45deg);}
 		}
-		&.active span {
+		&.active {
 			left: calc(50% - 2px);
 			&:nth-child(1){transform: rotate(45deg);}
 			&:nth-child(2){transform: translateY(calc(50% + 2px)) rotate(-45deg);}
 		}
 	}
 }
-
-//ヘッダーメニュー
-.menubar{
-	display: flex;
-	align-items: center;
-	height: 50px;
-	width: 100%;
-	background-color: $blue;
-	border-bottom: 1px solid $dark-blue;
-	.title {
-		font-weight: 500;
-		font-size: 24px;
-		margin-left: 20px;
-	}
-	
-	
-	
-	//トグルボタン
-	.toggle-button.top{
-		&.active {
-			span:nth-child(1){
-				top:50%;
-				transform: translate(-50%, -50%) rotate(45deg);
-			}
-			span:nth-child(2){
-				opacity: 0;
-			}
-			span:nth-child(3){
-				bottom:50%;
-				transform: translate(-50%, 50%) rotate(-45deg);
-			}	
-		}
-		//ボタンの棒線
-		span{
-			position: absolute;
-			display: block;
-			left: 50%;
-			transform: translate(-50%, 0) rotate(0deg);
-			width: 24px;
-			height: 2px;
-			background-color: rgba(0,0,0,0.7);
-			transition: all 250ms ease-in-out;
-			&:nth-child(1){
-				top:24%;
-			}
-			&:nth-child(2){
-				top:46%;
-			}
-			&:nth-child(3){
-				bottom: 24%;
-			}
-			
-		}
-	}
-}
-
-//コンテンツメニュー
-	.contents{
-		background-color: $blue;
-		border-top: 1px solid rgba(255,255,255,0.1);
-		overflow: hidden;
-		height: 0;
-		min-width: 300px;
-		width: 300px;
-		max-height: 0;
-		&.active{
-			transition: 1s linear;
-			height: auto;
-			max-height: 50em;
-			display: inline-flex;
-			flex-direction: column;
-		}
-		
-		a{
-			display: flex;
-			padding: 15px;
-			&.active, &:hover{
-				background-color: $dark-blue;
-			}
-		}
-		
-	}

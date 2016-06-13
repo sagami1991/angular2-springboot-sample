@@ -14,15 +14,18 @@ import com.myapp.domain.Setting;
  */
 @Repository
 public class SettingRepository {
+	private static String collection = "setting";
     @Autowired
     MongoTemplate mongo;
 
     public void save(String _id, Object obj){
-        mongo.save(new Setting<>(_id, obj), "setting");
+        mongo.save(new Setting<>(_id, obj), collection);
     }
 
     public <T> T fetchSetting(Class<T> classType, String id){
-        return mongo.findOne(query(where("id").is(id)), classType ,"setting");
+    	@SuppressWarnings("unchecked")
+		Setting<T> setting = mongo.findOne(query(where("id").is(id)), Setting.class, collection);
+    	return setting.getData();
     }
 
 }

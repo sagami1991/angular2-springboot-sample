@@ -1,33 +1,26 @@
 import {Component} from "@angular/core";
 import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
-import {LeagueInfo, TeamRank, Tyokin, Board} from "../interfaces";
-import {Http, Headers, URLSearchParams} from "@angular/http";
-import {EmojiPipe} from "../util/Util";
-
+import {Board} from "../interfaces";
+import {Http, URLSearchParams} from "@angular/http";
 
 @Component({
 	template:`
-	<h2>
-		人気の板
-	</h2>
+	<div class="header">
+		<div class="title">人気の板</div>
+	</div>
 	<ul *ngIf="popBoards">
 		<li *ngFor="let board of popBoards">
 			<a [routerLink]="['/Board', {id: board.id}]">{{board.name}}</a>
 		</li>
 	</ul>
-	<div [innerHTML]="emoji | toEmoji">
-	</div>
-
 	`,
 	styles: [require("./home.scss")],
 	directives: [ROUTER_DIRECTIVES],
-	pipes: [EmojiPipe]
 })
 export class Home {
 	private static popularBoardNames = ["なんでも実況J", "ニュー速(嫌儲)", "ニュー速VIP", "ニュース速報+", "スマホアプリ",
-	"野球ch", "難民", "芸スポ速報+"];
+	"野球ch", "難民", "芸スポ速報+", "自作PC"];
 	private popBoards: Board[];
-	private emoji = "&#127918;";
 	constructor(private params: RouteParams,
 							private http: Http) {};
 	private ngOnInit() {
@@ -39,13 +32,9 @@ export class Home {
 			this.popBoards = [];
 			//並び替え
 			Home.popularBoardNames.forEach((name) => {
-				const tmp = (<Board[]> data).filter((board) => board.name === name)[0];
-				if (tmp) {
-					this.popBoards.push(tmp);
-				}
+				const tmp = _.find(<Board[]>data, (board) => board.name === name);
+				if (tmp) this.popBoards.push(tmp);
 			});
-
-
-			});
+		});
 	}
 }

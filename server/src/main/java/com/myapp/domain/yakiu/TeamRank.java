@@ -1,13 +1,11 @@
 package com.myapp.domain.yakiu;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import lombok.Data;
 
 
 /**
@@ -15,9 +13,9 @@ import java.util.List;
  */
 @Data
 public class TeamRank {
-    @Pattern(regexp = "[ce|pa]")
-    private String type;
+	public static final String collection = "yakiuRanking";
     @NotNull
+    private String league;
     private Date updated;
-    private List<Tyokin> teams;
+    private List<Tyokin> ranking;
 }

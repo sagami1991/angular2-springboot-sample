@@ -5,13 +5,14 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.mongodb.WriteResult;
 import com.myapp.domain.Dat;
+import com.myapp.util.CommonUtil;
 
 /**
- * DBにdatファイルそのままつっこむ
+ * 
  * */
 @Repository
 public class DatRepository {
@@ -19,6 +20,9 @@ public class DatRepository {
 	
 	@Autowired
     MongoTemplate mongo;
+	
+	@Autowired
+	CommonUtil commonUtil;
 	
 	public Dat findById(String id) {
 		return mongo.findOne(query(where("id").is(id)), Dat.class, collection);
@@ -29,11 +33,12 @@ public class DatRepository {
 		mongo.insert(dat, collection);
 	}
 	
-	/** 更新 */
+	/** 更新（差分更新時呼ばれる） */
 	public void update(Dat dat) {
-		Update update = new Update();
-		update.set("file", dat.getFile());
-		mongo.updateFirst(query(where("id").is(dat.getId())), update, collection );
-		
+		WriteResult result = mongo.updateFirst(
+				query(where("id").is(dat.getId())),
+				commonUtil.createUpdate(dat),
+				Dat.class, collection );
+		System.out.println(result);
 	}
 }

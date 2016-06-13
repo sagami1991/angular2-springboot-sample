@@ -1,0 +1,20 @@
+
+.res-wrapper{
+	margin-bottom: 10px;
+}
+.res-body{
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.func-area{
+		margin-left: auto;
+		margin-right: 0;
+		display: flex;
+		align-items: centrer;
+	a{
+		cursor: pointer;
+		font-size: 32px;
+		margin-right: 24px;
+	}
+}

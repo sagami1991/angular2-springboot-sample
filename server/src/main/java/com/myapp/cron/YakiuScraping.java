@@ -22,7 +22,7 @@ import com.myapp.domain.yakiu.Tyokin;
 import com.myapp.repository.SettingRepository;
 
 @Component
-public class Scraping {
+public class YakiuScraping {
 
     @Autowired
     private SettingRepository settingRepository;
@@ -39,25 +39,27 @@ public class Scraping {
     /** 10分毎にスクレイピングする */
     @Scheduled(initialDelay = 1000, fixedRate = 10 * 60 * 1000)
     public void FetchRank() throws IOException {
-        if(profile.equals("dev")){
-            System.out.println("開発環境はスクレイピングしない");
-            return;
-        }
+//        if(profile.equals("dev")){
+//            System.out.println("開発環境はスクレイピングしない");
+//            return;
+//        }
         doc = Jsoup.connect(RANK_URL).get();
+        final List<TeamRank> list = new ArrayList<>();
         //セリーグ
-        TeamRank ceLeagu = new TeamRank();
-        ceLeagu.setType("ce");
-        ceLeagu.setTeams(fetchTyokin(CE_ID));
-        ceLeagu.setUpdated(fetchUpdated(CE_ID));
-
+        final TeamRank ceLeague = new TeamRank();
+        ceLeague.setLeague("セリーグ");
+        ceLeague.setRanking(fetchTyokin(CE_ID));
+        ceLeague.setUpdated(fetchUpdated(CE_ID));
+        list.add(ceLeague);
+        
         //パリーグ
-//        TeamRank paLeagu = new TeamRank();
-//        paLeagu.setType("pa");
-//        paLeagu.setTeams(fetchTyokin(PA_ID));
-//        paLeagu.setUpdated(fetchUpdated(PA_ID));
-//        repository.upsertByUpdatedAndType(ceLeagu);
-//        repository.upsertByUpdatedAndType(paLeagu);
-        settingRepository.save("ceRanking", ceLeagu);
+        final TeamRank paLeague = new TeamRank();
+        paLeague.setLeague("パリーグ");
+        paLeague.setRanking(fetchTyokin(PA_ID));
+        paLeague.setUpdated(fetchUpdated(PA_ID));
+        list.add(paLeague);
+        System.out.println("やきうスクレイピング");
+        settingRepository.save(TeamRank.collection, list);
 
     }
 

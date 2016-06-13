@@ -16,4 +16,5 @@ public class Board {
     private String domain;
     private String server;
     private String board;
+    private String defaultName;
 }

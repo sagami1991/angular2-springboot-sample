@@ -1,0 +1,14 @@
+#スタート
+systemctl start firewalld
+
+#自動起動
+systemctl enable firewalld
+
+#80番ポート開放用サービス追加
+firewall-cmd --add-service=http --zone=public --permanent
+firewall-cmd --reload
+
+#sshポート変更
+#コピーしてからetc内のポート番号22番から変更
+cp /usr/lib/firewalld/services/ssh.xml /etc/firewalld/services/ssh.xml
+

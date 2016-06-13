@@ -63,6 +63,11 @@
 		    <artifactId>okhttp</artifactId>
 		    <version>3.2.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-compress</artifactId>
+		    <version>1.8</version>
+		</dependency>
 
         <!--以下テスト用ライブラリ-->
         <dependency>

@@ -1,35 +1,27 @@
-<div class="header">
-	<div class="menubar">
-		<!-- タイトル -->
-		<div class = "title">welcom to underground</div>
-		<!-- トグルボタン -->
-		<div [class.active]="isMenuActive" 
-		class="" 
-		(click)="toggleMenu()" ></div>
-	</div>
-	<!-- コンテンツ -->
-	<div class = "contents"
-	[class.active]="isMenuActive" >
-		<!--<a [class.active]="isActive('ce')" [routerLink]="['/Home',{league: 'ce'}]">セリーグ</a>
-		<a [class.active]="isActive('pa')" [routerLink]="['/Home',{league: 'pa'}]">パリーグ</a>-->
-	</div>
-</div>
 <div class="side-header" [class.active]="isSideMenuActive">
 	<div class="toggle-button side" [class.active]="isSideMenuActive"
 		(click)="isSideMenuActive = !isSideMenuActive">
 		<span></span>
 		<span></span>
 	</div>
-	<a href="/" class="genre-wrapeer">
+	<a [routerLink]="['/Home']" class="genre-wrapeer">
 		<span class="glyphicon glyphicon-bed"></span>
-		<span class="genre-text">板一覧</span>
+		<span class="genre-text">トップ</span>
 	</a>
-	<a href="#"  class="genre-wrapeer">
+	<a [routerLink]="['/Home']" class="genre-wrapeer">
 		<span class="glyphicon glyphicon-tree-deciduous"></span>
-		<span class="genre-text">板</span>
+		<span class="genre-text">板（工事中）</span>
 	</a>
-	<a href="#"  class="genre-wrapeer">
+	<a [routerLink]="['/Home']" class="genre-wrapeer">
 		<span class="glyphicon glyphicon-piggy-bank"></span>
-		<span class="genre-text">スレッド</span>
+		<span class="genre-text">スレッド（工事中）</span>
+	</a>
+		<a [routerLink]="['/Yakiu']" class="genre-wrapeer">
+		<span class="glyphicon glyphicon-king"></span>
+		<span class="genre-text">やきう情報</span>
+	</a>
+	<a [routerLink]="['/Debug']" class="genre-wrapeer">
+		<span class="glyphicon glyphicon-scale"></span>
+		<span class="genre-text">デバッグ</span>
 	</a>
 </div>

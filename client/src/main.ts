@@ -7,13 +7,16 @@ import "zone.js/dist/zone";
 // lodashを_でgrobalに
 require('expose?_!lodash/core');
 //emoji-one
-require('expose?emojione!emojione/lib/js/emojione.min');
-require("!style!css!emojione/assets/css/emojione.min.css");
+require('expose?emojione!emojione/lib/js/emojione');
+require("!style!css!emojione/assets/css/emojione.css");
 emojione.imageType = 'svg';
-emojione.imagePathSVG ="//localhost:3001/node_modules/emojione/assets/svg/";
+emojione.imagePathSVG = PABLICPATH + "emojione/assets/svg/";
 //jqueryを$とjQueryでgrobal変数に
 require("expose?$!expose?jQuery!jquery");
 require('bootstrap-loader');
+require('!style!css!toastr/build/toastr.css');
+//css scssローダーでcssへ→cssローダー→styleローダーでstyleタグへ
+require("!style!css!sass!./main.scss");
 
 //angular2
 import {Component, enableProdMode} from '@angular/core';
@@ -26,10 +29,8 @@ import {Header} from "./components/Header";
 import {Home} from "./components/Home";
 import {BoardComponent} from "./components/BoardComponent";
 import {SureComponent} from "./components/SureComponent";
-
-
-//css scssローダーでcssへ→cssローダー→styleローダーでstyleタグへ
-require("!style!css!sass!./main.scss");
+import {DebugComponent} from "./components/DebugComponent";
+import {YakiuComponent} from "./components/YakiuComponent";
 
 if (ENV === "prod") {
 	enableProdMode();
@@ -46,10 +47,10 @@ if (ENV === "prod") {
 	{path: '/', name:"Home", component: Home},
 	{path: '/sureran/:id', name:"Board", component: BoardComponent},
 	{path: '/sure/:id', name:"Sure", component: SureComponent},
+	{path: '/yakiu', name:"Yakiu", component: YakiuComponent},
+	{path: '/debug', name:"Debug", component: DebugComponent},
 ])
 export class RootComponent {}
-
-
 
 /** 描写？ */
 bootstrap(RootComponent, [
