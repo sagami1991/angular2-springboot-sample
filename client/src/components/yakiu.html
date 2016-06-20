@@ -8,13 +8,13 @@
 		<div *ngFor="let team of teamRank.ranking; let i = index" class="rank-row">
 			<div class="juni">{{i + 1}}位</div>
 			<div class="syakkin-row">
-				<div class="icon-m kuroboshi" *ngFor="let hoge of team.tyokin * -1 | number"></div>
+				<div class="icon-s kuroboshi" *ngFor="let hoge of team.tyokin * -1 | number"></div>
 			</div>
 			<div class="team-icon-wraper">
 				<div class="icon-m team-{{team.name.toLowerCase()}}"></div>
 			</div>
 			<div class="tyokin-row">
-				<div class="icon-m siroboshi" *ngFor="let hoge of team.tyokin | number"></div>
+				<div class="icon-s siroboshi" *ngFor="let hoge of team.tyokin | number"></div>
 			</div>
 		</div>
 		更新日時 {{teamRank.updated | dateToString }}

@@ -2,13 +2,13 @@ import {Component} from "@angular/core";
 import {RouteParams} from "@angular/router-deprecated";
 import {TeamRank} from "../interfaces";
 import {Http} from "@angular/http";
-import {NumberPipe, DateFormatPipe} from "../util/Util";
+import {NumberToArrayPipe, DateFormatPipe} from "../util/Util";
 
 
 @Component({
 	template: require("./yakiu.html"),
 	styles: [require("./yakiu.scss")],
-	pipes:[NumberPipe, DateFormatPipe]
+	pipes:[NumberToArrayPipe, DateFormatPipe]
 })
 export class YakiuComponent {
 	private teamRanks: TeamRank[];

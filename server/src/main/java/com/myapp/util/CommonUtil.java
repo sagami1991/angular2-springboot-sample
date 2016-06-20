@@ -25,6 +25,10 @@ import com.mongodb.DBObject;
 
 @Component
 public class CommonUtil {
+	public static final String CHROME_UA = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36";
+	public static final String JANE_UA = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36";
+
+	
 	@Autowired
     MongoTemplate mongo;
 	
@@ -35,7 +39,7 @@ public class CommonUtil {
 	
 	/** 引数のDateが今より5秒以内だったらtrueを返す */
 	public static boolean isRecentUp(Date lastUpdate){
-		return new Date().getTime() - lastUpdate.getTime() < 5*1000;
+		return lastUpdate != null && new Date().getTime() - lastUpdate.getTime() < 5*1000;
 	}
 	
 	/** mongodbの更新オブジェクトをコピーして返す、ただしidは削除する */

@@ -1,9 +1,12 @@
 package com.myapp.controller;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -11,6 +14,11 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,12 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.myapp.domain.Dat;
 import com.myapp.domain.Res;
 import com.myapp.domain.Sure;
+import com.myapp.domain.Tokka;
 import com.myapp.domain.itaran.Board;
 import com.myapp.repository.BoardRepository;
 import com.myapp.repository.DatRepository;
 import com.myapp.repository.SettingRepository;
 import com.myapp.repository.SureRepository;
+import com.myapp.repository.TokkaRepository;
 import com.myapp.util.CommonUtil;
+import com.myapp.util.SignedRequestsHelper;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -39,12 +50,15 @@ import okhttp3.Response;
 @RestController
 @RequestMapping("api/dat")
 public class DatController {
+	private static final Logger logger = LoggerFactory.getLogger(DatController.class);
 	private static final String APP_KEY = "JYW2J6wh9z8p8xjGFxO3M2JppGCyjQ";
 	private static final String HM_KEY = "hO2QHdapzbqbTFOaJgZTKXgT2gWqYS";
 	private static final String CT = "1234567890";
 	private static final String HB = "e639a54671ccf9f839f0aee2a58fc7d5ad36b031a80611fd9e4409201fda8e69";
 	private String sid;
-	private boolean isOneRoop;
+	private boolean isPass401;
+	@Autowired
+	BoardController boardController;
 	@Autowired
 	BoardRepository boardRepository;
 	
@@ -71,9 +85,12 @@ public class DatController {
 		//板情報取得
 		Board board = boardRepository.findById(sure.getBid());
 		if(board == null) new RuntimeException("板なし");
+		boardController.fetchDefaultName(board);
+		
 		Dat oldDat = datRepository.findById(sureId);
 		//最近更新してるか、DBにdat落ちフラグ入ってる場合、そのまま返す
 		if(oldDat != null && ( oldDat.isOtiteru() || CommonUtil.isRecentUp(oldDat.getLastUpdate()))){
+			logger.info("最近取得しているので、スクレイピングせずにそのままDBの値返す");
 			return createMap(board, sure, oldDat);
 		}
 		String uri = "/v1/"+board.getServer()+"/"+board.getBoard()+"/"+sure.getDatNo();
@@ -97,12 +114,14 @@ public class DatController {
 		
 		Request req = headers.build();
 		Response response = client.newCall(req).execute();
-    	System.out.println(response);
+		logger.info("response", response);
     	byte[] datfile = response.body().bytes();
     	response.body().close();
     	
+    	Map<String, Object> resMap;
+    	
     	switch (response.code()) {
-    	//新規取得　gzipになっている
+    	//新規取得 gzipになっている
 		case 200:
 			Dat dat = new Dat();
 			dat.setId(sureId);
@@ -112,8 +131,8 @@ public class DatController {
 	    	String[] lines = new String(datfile, "Shift_JIS").split("\n");
 			Matcher m1 = Pattern.compile("^.+<>(.*?)(\\s\\[無断転載.+$|$)").matcher(lines[0]);
 			dat.setTitle(m1.find()? m1.group(1) : null);
-			//レスデータ作成
-			dat.setResList(datToResList(lines));
+			//レスリストと特価リストをセット
+			setResAndTokka(dat, lines);
 			//ファイルサイズセット
 			dat.setByteLength(datfile.length);
 			//更新日セット
@@ -121,42 +140,49 @@ public class DatController {
 			//自分用更新日セット
 			dat.setLastUpdate(new Date());
 			datRepository.insert(dat);
-			return createMap(board, sure, dat);
+			resMap = createMap(board, sure, dat);
+			break;
 			// TODO ここはスレッド立てる
 		//差分取得
 		case 206:
-			List<Res> list = datToResList(new String(datfile, "Shift_JIS").split("\n"));
+			//レスリストと特価リストをセット
+			setResAndTokka(oldDat, new String(datfile, "Shift_JIS").split("\n"));
 			oldDat.setByteLength(oldDat.getByteLength() + datfile.length);
-			oldDat.getResList().addAll(list);
 			//更新日セット
 			oldDat.setLastModified(response.headers().get("Last-Modified"));
 			datRepository.update(oldDat);
-			return createMap(board, sure, oldDat);
+			resMap = createMap(board, sure, oldDat);
+			break;
 			// TODO ここはスレッド立てる
 		//更新なし
 		case 304:
-			
-			return createMap(board, sure, oldDat);
+			resMap = createMap(board, sure, oldDat);
+			break;
 		//dat落ち
 		case 501:
 			if(oldDat != null) {
 				oldDat.setOtiteru(true);
 				datRepository.update(oldDat);
 			}
-			return createMap(board, sure, oldDat);
+			resMap = createMap(board, sure, oldDat);
+			break;
 		//sid期限切れ
 		case 401:
-			if(isOneRoop == false){
-				isOneRoop = true;
+			//ここは一度しか通らないようにする
+			if(!isPass401){
+				isPass401 = true;
 				setSidAndSaveDB();
-				return getAllRes(sureId);
+				resMap = getAllRes(sureId);
 			}else{
 				throw new RuntimeException("sidとれない");
 			}
+			break;
 			
 		default:
 			throw new RuntimeException(response.toString());
 		}
+    	isPass401 = false;
+    	return resMap;
 	}
 	
     @ResponseStatus(value = HttpStatus.NOT_IMPLEMENTED, reason = "dat落ち")
@@ -206,18 +232,20 @@ public class DatController {
 			Response response = client.newCall(req).execute();
 			final String sid = response.body().string().split(":")[1];
 			response.body().close();
-			// TODO 別スレッドで
-			settingRepository.save("sid", sid);
+			// DB保存する必要性なくなってきたためやめる
+			// settingRepository.save("sid", sid);
 			this.sid = sid;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-    /** datの文章をレスリストに変換 */
-    private List<Res> datToResList(String[] datLines) {
-		List<Res> list = new ArrayList<>();
+    /** レスリストと通販リストをdatオブジェクトにセット */
+    private void setResAndTokka(Dat dat, String[] datLines) {
+		List<Res> resList = new ArrayList<>();
+		List<String> tokkaUrlList = new ArrayList<>();
 		Pattern p = Pattern.compile("^(.*)<>(.*)<>(.*)\\sID:(.*?)(\\s.*<>|<>)\\s(.*)<>");
+		Pattern amaP = Pattern.compile("www\\.amazon\\.co\\.jp.+?(B0........)");
         for (String line : datLines) {
     		Matcher m = p.matcher(line);
         	if(m.find()){
@@ -225,11 +253,95 @@ public class DatController {
         		res.setMail(m.group(2));
         		res.setPostDate(m.group(3));
         		res.setId(m.group(4));
-        		res.setHonbun(m.group(6).replace("<br>", "\n").replaceAll("<a.+>&gt;&gt;([0-9]{1,4})</a>", ">>$1"));
-        		list.add(res);
+        		res.setHonbun(m.group(6).replaceAll("<br> ", "\n").replaceAll("<a.+>&gt;&gt;([0-9]{1,4})</a>", "&gt;&gt;$1"));
+        		resList.add(res);
+        		
+        		//本文に通販URL含まれていたらスクレイピング
+        		Matcher amaM = amaP.matcher(m.group(6));
+        		while(amaM.find()){
+        			tokkaUrlList.add("www.amazon.co.jp/dp/" + amaM.group(1));
+        		}
         	}
 		}
-        return list;
+        List<Tokka> tokkaList = createTokkaList(tokkaUrlList);
+        
+        //差分更新と新着更新の場合で分ける
+        if(dat.getResList() != null) dat.getResList().addAll(resList);
+        else dat.setResList(resList);
+        if(dat.getTokkaList() != null) dat.getTokkaList().addAll(tokkaList);
+        else dat.setTokkaList(tokkaList);
+        return;
     }
+    
+    @Autowired
+    TokkaRepository tokkaRepository;
+    
+    /** 特価リストを作る */
+	private List<Tokka> createTokkaList(List<String> urlList) {
+		//重複削除
+		urlList = new ArrayList<>( new HashSet<>(urlList));
+		List<Tokka> tokkaList = new ArrayList<>();
+		final List<String> AsinList = new ArrayList<>();
+		final Pattern p = Pattern.compile("www.amazon.co.jp/dp/(B0........)");
+		
+		for (String url : urlList) {
+			Tokka tokka = tokkaRepository.findById(url);
+			if(tokka == null){
+				Matcher m = p.matcher(url);
+				m.find();
+				AsinList.add(m.group(1));
+			} else {
+				tokkaList.add(tokka);
+			}
+		}
+		
+		// アマゾンAPI叩く TODO ここらへん整理
+		if(AsinList.size() == 0){
+			return tokkaList;
+		}
+		
+        try {
+        	SignedRequestsHelper helper = SignedRequestsHelper.getInstance("webservices.amazon.co.jp", "AKIAIEUE7ZHSDHQMBJHQ", "cYN6cC9LqfI4BJQtOKreNAZnNi23imJfSzz7Gu+A");
+	        
+        	Map<String, String> params = new HashMap<String, String>();
+	        params.put("Service", "AWSECommerceService");
+	        params.put("Operation", "ItemLookup");
+	        params.put("AWSAccessKeyId", "AKIAIEUE7ZHSDHQMBJHQ");
+	        params.put("AssociateTag", "saito8485-22");
+	        params.put("ItemId", String.join(",", AsinList));
+	        params.put("IdType", "ASIN");
+	        params.put("ResponseGroup", "Images,ItemAttributes");
 	
+			OkHttpClient client = new OkHttpClient();
+			Request req = new Request.Builder()
+	    			.url(helper.sign(params))
+	    			.build();
+			Response response = client.newCall(req).execute();
+			Document document = Jsoup.parse(response.body().string());
+			response.body().close();
+			List<Tokka> newTokkaList = new ArrayList<>();
+			for (Element item : document.select("Item")) {
+				Tokka tokka = new Tokka();
+				tokka.setId("www.amazon.co.jp/dp/" + item.select("asin").text());
+				try{
+					tokka.setPrice(Integer.parseInt(item.select("ItemAttributes > ListPrice > Amount").text()));
+				} catch (NumberFormatException e) {
+					logger.warn("価格取得できない {}", item);
+					tokka.setPrice(0);
+				}
+				tokka.setTitle(item.select("ItemAttributes > Title").text());
+				tokka.setImgUrl(item.select("> SmallImage > URL").first().text());
+				tokka.setSiteName("amazon");
+				tokkaList.add(tokka);
+				newTokkaList.add(tokka);
+				logger.info("amazonから商品情報取得 {}", tokka);
+			}
+			tokkaRepository.batchInsert(newTokkaList);
+			return tokkaList;
+		} catch (IOException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return tokkaList;
+		}
+		
+	}
 }

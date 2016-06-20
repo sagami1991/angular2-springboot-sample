@@ -7,3 +7,5 @@ declare module emojione {
 	var imagePathSVG: string;
 	function unicodeToImage(unicode: string): string;
 }
+
+declare var ga: any;

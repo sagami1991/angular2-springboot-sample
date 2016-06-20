@@ -21,4 +21,6 @@ public class Dat {
 	private Date lastUpdate;
 	private boolean otiteru;
 	private List<Res> resList;
+	/** 通販情報リスト */
+	private List<Tokka> tokkaList;
 }

@@ -41,6 +41,7 @@ module.exports = {
   },
 	plugins: [
 		new CopyWebpackPlugin([
+			{ from: 'src/init', to: 'init' },
 			//絵文字画像コピー
 			{ from: 'node_modules/emojione/assets/svg', to: 'emojione/assets/svg' },
 		])

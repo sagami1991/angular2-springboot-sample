@@ -1,20 +1,68 @@
-
+@import "../_common.scss";
 .res-wrapper{
-	margin-bottom: 10px;
+	padding: 10px 0px;
+	border-bottom: 1px solid $white-gray;
+	&:first-of-type {
+		border-top: 1px solid $white-gray;
+	}
+}
+.res-header {
+	color: rgb(120,140,155);
+	font-size: 12px;
 }
 .res-body{
 	white-space: pre-wrap;
 	word-wrap: break-word;
 }
 
-.func-area{
-		margin-left: auto;
-		margin-right: 0;
-		display: flex;
-		align-items: centrer;
-	a{
-		cursor: pointer;
-		font-size: 32px;
-		margin-right: 24px;
+.res-id{}
+.red { color: $red }
+.blue{ color: $blue }
+.normal { color: rgb(120,140,155); }
+
+.filter-button-area {
+	button { margin-right: 8px;}
+}
+
+//サムネイル
+.thumbs-wrapper {
+	margin-top: 12px;
+	display: flex;
+	.thumb-box {
+		position: relative;
+		border: 1px solid #D4CFCF;
+		margin-right: 10px;
+		img {
+			min-height: 80px;
+			min-width: 80px;
+		}
+		&:hover {
+			.thumb-tooltip {
+				display: block;
+				animation: show 200ms linear;
+			};
+		} 
+		.thumb-tooltip{
+			border: 1px solid $white-gray;
+			padding: 4px;
+			max-width: 300px;
+			font-size: 12px;
+			position: absolute;
+			display: none;
+			background-color: rgba(255, 255, 255, 0.8);
+			left:0;
+			top:0;
+			.thumb-title{
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+		}
 	}
+
+}
+
+@keyframes show{
+		from{opacity: 0;}
+		to{opacity: 1;}
 }

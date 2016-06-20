@@ -1,0 +1,1 @@
+nohup java -jar -Dspring.profiles.active=prod 2ch-0.0.1-SNAPSHOT.jar &

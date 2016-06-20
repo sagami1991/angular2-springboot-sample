@@ -1,9 +1,8 @@
 import {Component} from "@angular/core";
-import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
-import {DebugInfo} from "../interfaces";
-import {Http, URLSearchParams} from "@angular/http";
-import {EmojiPipe} from "../util/Util";
+import {Http} from "@angular/http";
+import {NumberFormatPipe} from "../util/Util";
 
+const numeral = require("numeral");
 
 @Component({
 	template:`
@@ -13,27 +12,31 @@ import {EmojiPipe} from "../util/Util";
 	<table *ngIf="debug" class="table">
 		<tr *ngFor="let item of debugPrefix">
 			<td>{{item.label}}</td>
-			<td>{{debug[item.prop]}}  {{item.suffix}}</td>
+			<td>{{debug[item.prop] | numberFormat:item.format}}  {{item.suffix}}</td>
 		</tr>
 	</table>
-
 	`,
-	// styles: [require("./board.scss")],
-	// directives: [ROUTER_DIRECTIVES],
-	// pipes: [EmojiPipe]
+	pipes: [NumberFormatPipe]
 })
 export class DebugComponent {
-	private debug: DebugInfo;
+	private debug; //: DebugInfo;
 	private debugPrefix = [
+		{
+			prop: "osName",
+			label: "OS",
+			suffix: ""
+		},
 		{
 			prop: "totalMem",
 			label: "合計メモリ",
-			suffix: "MB"
+			suffix: "MB",
+			format: "0,0"
 		},
 		{
 			prop: "useMem",
 			label: "使用メモリ",
-			suffix: "MB"
+			suffix: "MB",
+			format: "0,0"
 		},
 		{
 			prop: "perMem",
@@ -52,10 +55,14 @@ export class DebugComponent {
 		}
 	];
 	constructor(private http: Http) {};
-
+	private format(value: number | string) {
+		return typeof value === "number" ? numeral(value).format("0,0") : value;
+	}
 	private ngOnInit() {
 		this.http.get(`api/setting/debug`)
 		.map(res => res.json())
-		.subscribe(data => this.debug = data);
+		.subscribe(data => {
+			this.debug = data;
+		});
 	}
 }

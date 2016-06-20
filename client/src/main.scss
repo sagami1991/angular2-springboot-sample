@@ -18,9 +18,13 @@ h1,h2,h3 {
 *{
 	box-sizing: border-box;
 }
-
+a { cursor: pointer; }
 a, a:hover, a:active{
 	text-decoration: none;
+}
+ul {
+	padding-left: 0;
+	list-style:none;
 }
 
 .emojione{
@@ -32,6 +36,7 @@ $dark-blue: #F3F3F3;
 $blue:#FDFDFD;
 .header{
 	display: flex;
+	z-index: 50;
 	align-items: center;
 	top:0;
 	position: fixed;
@@ -44,6 +49,16 @@ $blue:#FDFDFD;
 		font-weight: 500;
 		font-size: 24px;
 		margin-left: 20px;
+	}
+	.func-area{
+		margin-left: auto;
+		margin-right: 0;
+		display: flex;
+		align-items: centrer;
+		a {
+			font-size: 32px;
+			margin-right: 24px;
+		}
 	}
 }
 
@@ -76,4 +91,13 @@ $blue:#FDFDFD;
 	min-width: 32px;
 	height: 32px;
 	min-height: 32px;
+}
+
+.icon-s {
+	background-size: 16px 16px;
+	content: "";
+	width: 16px;
+	min-width: 16px;
+	height: 16px;
+	min-height: 16px;
 }

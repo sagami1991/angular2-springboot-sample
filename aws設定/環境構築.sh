@@ -34,5 +34,6 @@ forever start app.js -u mongo -p majidesuzo
 
 
 #立ち上げ系
+sudo nginx
 sudo service mongod start
-cd node_modules/mongo-express/ && forever start -u mongo -p majidesuzo
+nohup java -jar -Dspring.profiles.active=prod 2ch-0.0.1-SNAPSHOT.jar &

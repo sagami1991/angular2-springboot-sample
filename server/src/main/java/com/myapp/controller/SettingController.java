@@ -1,6 +1,7 @@
 package com.myapp.controller;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import com.myapp.domain.DebugInfo;
 import com.myapp.domain.itaran.BoardGenre;
 import com.myapp.domain.yakiu.TeamRank;
 import com.myapp.repository.SettingRepository;
+import com.sun.management.OperatingSystemMXBean;
 
+@SuppressWarnings("restriction")
 @RestController
 @RequestMapping("api/setting")
 public class SettingController {
@@ -28,9 +31,14 @@ public class SettingController {
 	@RequestMapping("debug")
 	public DebugInfo getDebug(){
 		DebugInfo info = new DebugInfo();
-		info.setTotalMem((double)Runtime.getRuntime().totalMemory() / Math.pow(1024, 2));
-		info.setUseMem((info.getTotalMem() - (double)Runtime.getRuntime().freeMemory() / Math.pow(1024, 2)));
-		info.setPerMem(info.getUseMem() / info.getTotalMem() * 100);
+		OperatingSystemMXBean system = (OperatingSystemMXBean) ManagementFactory
+				.getOperatingSystemMXBean();
+		info.setOsName(System.getProperty("os.name"));
+		long totalMem = system.getTotalPhysicalMemorySize();
+		long freeMem = system.getFreePhysicalMemorySize();
+		info.setTotalMem(totalMem / (int)Math.pow(1024, 2));
+		info.setUseMem((info.getTotalMem() - freeMem / (int)Math.pow(1024, 2)));
+		info.setPerMem((double)info.getUseMem() / info.getTotalMem() * 100);
 		File file = new File("/");
 		info.setTotalSpace((double)file.getTotalSpace() / Math.pow(1024, 3));
 		info.setFreeSpace((double)file.getFreeSpace() / Math.pow(1024, 3));

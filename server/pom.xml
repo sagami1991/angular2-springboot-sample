@@ -63,6 +63,12 @@
 		    <artifactId>okhttp</artifactId>
 		    <version>3.2.0</version>
 		</dependency>
+		<!-- amazonAPIへのリクエスト用 -->
+		<dependency>
+		    <groupId>com.amazonaws</groupId>
+		    <artifactId>aws-java-sdk</artifactId>
+		    <version>1.0.002</version>
+		</dependency>
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-compress</artifactId>

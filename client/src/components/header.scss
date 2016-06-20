@@ -3,6 +3,7 @@ $blue:#FDFDFD;
 $sidebar-width: 40px;
 //サイドヘッダー
 .side-header {
+	z-index: 51;	
 	width: $sidebar-width;
 	padding-top: 50px;
 	position: fixed;
@@ -11,7 +12,6 @@ $sidebar-width: 40px;
 	top: 0;
 	bottom: 0;
 	left: 0;
-	z-index: 50;
 	background-color: $dark-blue;
 	overflow: hidden;
 	&, .genre-wrapeer{

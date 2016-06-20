@@ -5,9 +5,10 @@
     <title>welcome to underground</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <base href="/" />
+    <link rel="stylesheet" type="text/css" th:href="|//${appConfig.hostName}:3001/init/style.css|" />
 </head>
 <body>
-    <my-app>loading...</my-app>
+    <my-app class="loading">loading...</my-app>
     <script th:src="|//${appConfig.hostName}:3001/main.js|"></script>
     <!-- Google Analytics -->
     <script>

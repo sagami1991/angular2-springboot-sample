@@ -58,4 +58,10 @@ public class BoardRepository {
 		mongo.updateFirst(query(where("id").in(board.getId())), Update.update("defaultName", board.getDefaultName()), Board.class, collection);
 	}
 	
+	/** 全フィールド更新 */
+	public void update(Board board){
+		mongo.updateFirst(query(where("id").in(board.getId())), commonUtil.createUpdate(board), Board.class, collection);
+
+	}
+	
 }

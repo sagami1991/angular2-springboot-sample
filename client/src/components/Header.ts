@@ -1,40 +1,35 @@
 import {Component, ElementRef} from "@angular/core";
-import {ROUTER_DIRECTIVES, Router} from "@angular/router-deprecated";
-import {Location} from '@angular/common';
+import {ROUTER_DIRECTIVES} from "@angular/router-deprecated";
 
 @Component({
 	selector: "app-header",
 	styles: [require("./header.scss")],
 	template: require("./header.html"),
 	host: {
-		'(document:click)': 'onClick($event)',
+		'(document:click)': 'onClick(event)',
 	},
 	directives: [ROUTER_DIRECTIVES]
 })
 export class Header {
-	private isSideMenuActive: boolean;
 	/** メニュー開いてたらtrue */
-	private isMenuActive: boolean;
+	private isSideMenuActive: boolean;
 	
-	constructor(private router:Router,
-							private eRef: ElementRef,
-							private location:Location) {}
-	
+	constructor(private eRef: ElementRef) {}
+	private ngOnInit() {
+		const openMenuElm = (<HTMLElement> this.eRef.nativeElement).querySelector(".toggle-button.side");
+		openMenuElm.addEventListener("click", (event) => {
+			this.toggleMenu();
+			event.stopPropagation();
+		});
+	}
 	/** メニュー開くボタン以外クリックされたらメニュー閉じる */
 	private onClick(event : Event) {
-		const openMenuElm = (<HTMLElement> this.eRef.nativeElement).querySelector(".toggle-button.side");
-		if (event.target !== openMenuElm) {
 			this.isSideMenuActive = false;
-		}
 	}
 	
 	
 	/** メニューを出したり隠したり */
-	private toggleMenu(flag: boolean): void {
-		this.isMenuActive = !this.isMenuActive;
-	}
-	/** メニューを隠す */
-	private hideMenu(): void {
-		this.isMenuActive = false;
+	private toggleMenu(): void {
+		this.isSideMenuActive = !this.isSideMenuActive;
 	}
 }

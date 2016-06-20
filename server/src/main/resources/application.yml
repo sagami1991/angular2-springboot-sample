@@ -4,6 +4,10 @@ spring:
   data:
     mongodb:
       database: nichan
+logging:
+    file: logs/myapp.log
+    level:
+        org.springframework.web: INFO
 ---
 spring:
   profiles: dev

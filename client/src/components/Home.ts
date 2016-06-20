@@ -1,9 +1,11 @@
-import {Component} from "@angular/core";
+import {Component, Input} from "@angular/core";
 import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
 import {Board} from "../interfaces";
 import {Http, URLSearchParams} from "@angular/http";
+import {stopLoading} from "../util/Util";
 
 @Component({
+	selector: "child",
 	template:`
 	<div class="header">
 		<div class="title">人気の板</div>
@@ -23,7 +25,9 @@ export class Home {
 	private popBoards: Board[];
 	constructor(private params: RouteParams,
 							private http: Http) {};
+							
 	private ngOnInit() {
+		stopLoading(false);
 		let params = new URLSearchParams();
 		params.set("names", Home.popularBoardNames.join(","));
 		this.http.get(`api/boards/bynames`, {search: params})
@@ -35,6 +39,7 @@ export class Home {
 				const tmp = _.find(<Board[]>data, (board) => board.name === name);
 				if (tmp) this.popBoards.push(tmp);
 			});
+			stopLoading(true);
 		});
 	}
 }

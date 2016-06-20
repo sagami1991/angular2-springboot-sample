@@ -1,10 +1,44 @@
 .suretai {
-@media (min-width: 1200px) { max-width: 600px;}
-@media (min-width: 992px) and (max-width: 1199px) {max-width: 500px;}
-@media (min-width: 768px) and (max-width: 991px) {max-width: 400px;}
-@media (max-width: 767px) {max-width: 300px;}
-@media (max-width: 480px) {max-width: 200px;}
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+@media (min-width: 1200px) { max-width: 1200px;}
+@media (min-width: 992px) and (max-width: 1199px) {max-width: 800px;}
+@media (min-width: 768px) and (max-width: 991px) {max-width: 700px;}
+@media (max-width: 767px) {max-width: 500px;}
+@media (max-width: 480px) {max-width: 400px;}
+}
+
+.sort-area {
+	margin-bottom: 4px;
+}
+
+.sure-row {
+	&:first-of-type {
+		border-top: 1px solid gray;
+	}
+	border-bottom: 1px solid gray;
+	padding: 4px 0;
+	.suretai {
+		margin-bottom: 4px;
+		word-break: break-all;
+	}
+	.sub {
+		display: flex;
+		color: gray;
+		font-size: 12px;
+		div{
+			margin-right: 10px;
+
+		}
+		.hiduke {
+		}
+		.ikioi{
+			margin-left: auto;
+			font-weight: bold;
+			&.red{ color: rgb(210, 12, 12);}
+			&.blackRed{color: rgb(160, 12, 12);}
+		}
+		.length {
+			min-width: 3em;
+			font-weight: bold;
+		}
+	}
 }

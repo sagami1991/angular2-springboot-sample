@@ -1,7 +1,9 @@
+
 //angular2に必要
 import "core-js/es6";
 import 'core-js/es7/reflect';
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/finally";
 import "zone.js/dist/zone";
 
 // lodashを_でgrobalに
@@ -34,6 +36,8 @@ import {YakiuComponent} from "./components/YakiuComponent";
 
 if (ENV === "prod") {
 	enableProdMode();
+} else {
+	require('zone.js/dist/long-stack-trace-zone');
 }
 
 /** 始まりのクラス？ */
@@ -50,7 +54,12 @@ if (ENV === "prod") {
 	{path: '/yakiu', name:"Yakiu", component: YakiuComponent},
 	{path: '/debug', name:"Debug", component: DebugComponent},
 ])
-export class RootComponent {}
+export class RootComponent {
+	private ngOnInit() {
+		document.querySelector(".loading").removeAttribute("class");
+	}
+
+}
 
 /** 描写？ */
 bootstrap(RootComponent, [

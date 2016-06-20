@@ -1,5 +1,7 @@
 package com.myapp.domain.itaran;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.Data;
@@ -17,4 +19,6 @@ public class Board {
     private String server;
     private String board;
     private String defaultName;
+	/** 最後に2ch.netからスクレイピングした日付、last-modifedとは別 */
+	private Date lastUpdate;
 }

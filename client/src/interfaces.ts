@@ -29,6 +29,10 @@ export interface Sure {
 	suretai: string;
 	length: number;
 	otiteru:boolean;
+	//ここから後付
+	date: Date;
+	ikioi: number;
+	ikioiColor: string;
 }
 
 export interface Res {
@@ -37,6 +41,13 @@ export interface Res {
 	postDate: string;
 	id: string;
 	honbun: string;
+	//ここから後付
+	/** フィルターされても残るようにindex */
+	index: number;
+	/** アンカーされてる先 */
+	fromAnkers: number[];
+	/** サムネイル */
+	thumbs: Tokka[];
 }
 
 export interface Dat {
@@ -51,6 +62,15 @@ export interface Dat {
 	lastUpdate: Date;
 	otiteru: boolean;
 	resList: Res[];
+	tokkaList: Tokka[];
+}
+
+export interface Tokka {
+	id: string;
+	title: string;
+	price: number;
+	siteName: string;
+	imgUrl: string;
 }
 
 
@@ -61,4 +81,5 @@ export interface DebugInfo {
 	perMem: number;
 	totalSpace: number;
 	freeSpace: number;
+	osName: string;
 }
