@@ -114,7 +114,7 @@ public class DatController {
 		
 		Request req = headers.build();
 		Response response = client.newCall(req).execute();
-		logger.info("response", response);
+		logger.info("dat取得 {}", response);
     	byte[] datfile = response.body().bytes();
     	response.body().close();
     	

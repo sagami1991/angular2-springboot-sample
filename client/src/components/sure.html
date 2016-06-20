@@ -24,7 +24,7 @@
 					ID: {{res.id}} {{getIdstate(res.id, res.index)}}
 				</a>
 		</div>
-		<div class="res-body" [innerHTML]="res.honbun | replaceAnker | replaceLink | toEmoji"
+		<div class="res-body" [innerHTML]="res.honbun"
 		 (click)="showAnkerTo($event, res.index)">
 		</div>
 		<div class="thumbs-wrapper" *ngFor="let thumb of res.thumbs">

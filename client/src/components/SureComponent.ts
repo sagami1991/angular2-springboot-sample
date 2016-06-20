@@ -24,30 +24,12 @@ class ResFilter implements PipeTransform {
 	}
 }
 
-/** リンクをaタグに包んで返す */
-@Pipe({name: "replaceLink"})
-class LinkPipe implements PipeTransform {
-	transform(body: string): string {
-			return body.replace(/h?(ttps?:\/\/[^\s]+)/g, (url, $1: string) => {
-				return `<a href="h${$1}" target="_blank">h${$1}</a>`;
-			});
-	}
-}
-
-@Pipe({name: "replaceAnker"})
-class AnkerPipe implements PipeTransform {
-	transform(body: string): string {
-		return body.replace(/&gt;&gt;([0-9]{1,4})/g, (match, $1: string) => {
-				return `<a class="anker-to" data-to="${Number($1) - 1}">&gt;&gt;${$1}</a>`;
-		});
-	}
-}
 
 @Component({
 	template:require("./sure.html"),
 	styles: [require("./sure.scss")],
 	directives: [ROUTER_DIRECTIVES],
-	pipes: [EmojiPipe, NumberFormatPipe, ResFilter, AnkerPipe, LinkPipe]
+	pipes: [EmojiPipe, NumberFormatPipe, ResFilter]
 })
 export class SureComponent {
 	private board: Board;
@@ -75,6 +57,9 @@ export class SureComponent {
 							private http: Http) {};
 
 	private ngOnInit() {
+		this.humanIds = {};
+		this.filterType = "";
+
 		stopLoading(false);
 		this.http.get(`api/dat/sid/${this.params.get("id")}`)
 		.map(res => res.json())
@@ -83,11 +68,10 @@ export class SureComponent {
 			this.board = (<any>data).board;
 			this.sure = (<any>data).sure;
 			this.dat = (<any>data).dat;
-			if (this.dat.otiteru) {
-				toastr.error("dat落ち");
-			}
-			this.convertRes();
-			this.filterType = "";
+			if (this.dat.otiteru) toastr.error("dat落ち");
+			const name = this.board.defaultName;
+			this.board.defaultName = name ? name.replace("＠無断転載禁止", "") : "";
+			this.convertRes(this.dat.resList, 0);
 		}, e => errorHandler(e));
 	}
 
@@ -106,56 +90,46 @@ export class SureComponent {
 		this.http.get(`api/dat/sabun/${this.params.get("id")}`, {search:params})
 		.map(res => res.json())
 		.subscribe(data => {
-			_.each((<Res[]> data), res => {this.dat.resList.push(res); });
 			toastr.success(`${data.length}件差分取得`);
-			this.convertRes();
+			this.convertRes(data, this.dat.resList.length);
 		},
 			e => errorHandler(e)
 		);
 	}
 
-	private convertRes() {
-		//無断転載禁止を削除
-		if (!this.board.defaultName) {
-			console.warn("板名のデフォルト名ない");
-			this.board.defaultName = "";
-		} 
-
-		this.board.defaultName = this.board.defaultName.replace("＠無断転載禁止", "");
-		
-		//ID連想配列生成
-		this.humanIds = {};
-		_.each(this.dat.resList, (res: Res, i:number) => {
-			res.index = i;
+	/** レスリストを色々変換 */
+	private convertRes(resArr: Res[], start: number) {
+		_.each(resArr, (res: Res, i:number) => {
+			res.index = i + start;
 			//ID連想配列生成
-			if (!this.humanIds[res.id]) {
-				this.humanIds[res.id] = {resIdxes: [i] };
-			} else {
-				this.humanIds[res.id].resIdxes.push(i);
-			}
+			if (!this.humanIds[res.id]) this.humanIds[res.id] = {resIdxes: [res.index] };
+			else this.humanIds[res.id].resIdxes.push(res.index);
 
-
-			//アンカーされている先を取得
+			//アンカーリンク作成
 			res.fromAnkers = [];
-			const ankerReg = new RegExp("&gt;&gt;([0-9]{1,4})", "g");
-			let ankerRegArr: RegExpExecArray;
-			while (ankerRegArr = ankerReg.exec(res.honbun)) {
-				const resIdx = Number(ankerRegArr[1]) - 1;
-				if (i > resIdx) this.dat.resList[resIdx].fromAnkers.push(i);
-			}
+			res.honbun = res.honbun.replace(/&gt;&gt;([0-9]{1,4})/g, (match, $1: string) => {
+				const resIdx = Number($1) - 1;
+				if (res.index > resIdx) this.dat.resList[resIdx].fromAnkers.push(i);
+				return `<a class="anker-to" data-to="${Number($1) - 1}">&gt;&gt;${$1}</a>`;
+			});
+
+			//httpリンク作成
+			res.honbun = res.honbun.replace(/h?(ttps?:\/\/[^\s]+)/g, (url, $1: string) => {
+				return `<a href="h${$1}" target="_blank">h${$1}</a>`;
+			});
 
 			// サムネイルリスト作成
 			res.thumbs = [];
-			const reg = new RegExp("https?:\/\/www\.amazon\.co\.jp.+?(B0........)", "g");
-			let exeArr: RegExpExecArray;
-			if (exeArr = reg.exec(res.honbun)) {
-				const tokkaKey = `www.amazon.co.jp/dp/${exeArr[1]}`;
-				let tokkaInfo: Tokka;
-				if (tokkaInfo = _.find(this.dat.tokkaList, {id:tokkaKey})) {
-							res.thumbs.push(tokkaInfo);
-				}
-			}
-			
+			// const reg = new RegExp("https?:\/\/www\.amazon\.co\.jp.+?(B0........)", "g");
+			// let exeArr: RegExpExecArray;
+			// if (exeArr = reg.exec(res.honbun)) {
+			// 	const tokkaKey = `www.amazon.co.jp/dp/${exeArr[1]}`;
+			// 	let tokkaInfo: Tokka;
+			// 	if (tokkaInfo = _.find(this.dat.tokkaList, {id:tokkaKey})) {
+			// 				res.thumbs.push(tokkaInfo);
+			// 	}
+			// }
+			if(start !== 0) this.dat.resList.push(res);
 		});
 	}
 
