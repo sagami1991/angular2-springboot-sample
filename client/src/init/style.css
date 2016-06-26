@@ -1,8 +1,12 @@
+body {
+	margin: 0;
+}
+
 .loading:after{
     border-radius: 50%;
-    border-width: 8px;
+    border-width: 10px;
     border-style: solid;
-    border-color: #E7581C;
+    border-color: #00897b;
     border-right-color: transparent;
     position: absolute;
     top: 80px;
@@ -31,6 +35,6 @@
 }
 
 @keyframes spin {
-	from {transform:rotate(0deg);}
-	to {transform:rotate(360deg);}
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
 }

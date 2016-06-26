@@ -48,6 +48,15 @@ export interface Res {
 	fromAnkers: number[];
 	/** サムネイル */
 	thumbs: Tokka[];
+	/** IDの色 */
+	idColor: string;
+	/** (4/5)のようなIDの数 */
+	idCount: string;
+	/** レス番の色 */
+	noColor: string;
+	/** (2)のようなアンカーされている数 */
+	ankerCount: string;
+
 }
 
 export interface Dat {

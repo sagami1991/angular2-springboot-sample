@@ -1,4 +1,6 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const dateFormat = require('dateformat');
 
 module.exports = {
 	entry: {
@@ -12,9 +14,20 @@ module.exports = {
   },
 	resolve: {
 		extensions: ['', '.ts','.js'],
-		root:["./src"]
+		root:["./src"],
+		modulesDirectories: ['node_modules']
   },
 	module: {
+		  preLoaders: [
+      {
+        test: /\.js$/,
+        loader: 'source-map-loader',
+        exclude: [
+          './node_modules/rxjs',
+          './node_modules/@angular'
+        ]
+      }
+    ],
     loaders: [
       {
         test: /\.ts$/,
@@ -22,7 +35,7 @@ module.exports = {
       },
 			{ test: /\.html$/, loader: 'raw'},
 			{ test: /\.scss$/, loaders: ["raw","sass"] },
-			{ test: /\.png$/, loader: "url" },
+			{ test: /\.png$/, loader: "url?mimetype=image/png" },
 			//bootstrapのフォント用
 			{
         test: /\.(woff|woff2)$/,
@@ -44,7 +57,10 @@ module.exports = {
 			{ from: 'src/init', to: 'init' },
 			//絵文字画像コピー
 			{ from: 'node_modules/emojione/assets/svg', to: 'emojione/assets/svg' },
-		])
+		]),
+		new DefinePlugin({
+			VERSION: `"${dateFormat(new Date(),"yyyy/mm/dd HH:MM")}"`
+		}),
 	],
 	node: {
     global: 'window',

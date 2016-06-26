@@ -56,6 +56,7 @@ public class SureController {
 	}
 	
 	private Map<String, Object> scrapingSureran(Board board) throws IOException{
+		logger.info("start {}", new Date());
 		boardController.fetchDefaultName(board);
 		
 		//スレ一覧取得用リクエスト情報構築
@@ -89,6 +90,7 @@ public class SureController {
     	sureRepository.upsertBatch(list);
     	boardRepository.update(board);
     	
+    	logger.info("end {}", new Date());
     	Map<String, Object> map = new HashMap<>();
     	map.put("board", board);
     	map.put("sures", list);

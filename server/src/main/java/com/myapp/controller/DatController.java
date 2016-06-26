@@ -80,11 +80,11 @@ public class DatController {
 	public Map<String, Object> getAllRes(@PathVariable("sid") @NotNull String sureId) throws IOException{
 		//スレ情報取得
 		Sure sure = sureRepository.findById(sureId);
-		if(sure == null) new RuntimeException("スレなし");
-		
+		if(sure == null) throw new RuntimeException("対象のスレが存在しません" + sureId);
+		logger.info("sureId {}",sureId);
 		//板情報取得
 		Board board = boardRepository.findById(sure.getBid());
-		if(board == null) new RuntimeException("板なし");
+		if(board == null) throw new RuntimeException("板なし");
 		boardController.fetchDefaultName(board);
 		
 		Dat oldDat = datRepository.findById(sureId);
@@ -143,7 +143,7 @@ public class DatController {
 			resMap = createMap(board, sure, dat);
 			break;
 			// TODO ここはスレッド立てる
-		//差分取得
+		//差分取得(gzipではない)
 		case 206:
 			//レスリストと特価リストをセット
 			setResAndTokka(oldDat, new String(datfile, "Shift_JIS").split("\n"));
@@ -244,7 +244,7 @@ public class DatController {
     private void setResAndTokka(Dat dat, String[] datLines) {
 		List<Res> resList = new ArrayList<>();
 		List<String> tokkaUrlList = new ArrayList<>();
-		Pattern p = Pattern.compile("^(.*)<>(.*)<>(.*)\\sID:(.*?)(\\s.*<>|<>)\\s(.*)<>");
+		Pattern p = Pattern.compile("^(.*)<>(.*?)<>(.+)\\s(ID:)?(.*)(\\s.*)?<>\\s(.*)<>");
 		Pattern amaP = Pattern.compile("www\\.amazon\\.co\\.jp.+?(B0........)");
         for (String line : datLines) {
     		Matcher m = p.matcher(line);
@@ -252,24 +252,23 @@ public class DatController {
         		Res res = new Res();
         		res.setMail(m.group(2));
         		res.setPostDate(m.group(3));
-        		res.setId(m.group(4));
-        		res.setHonbun(m.group(6).replaceAll("<br> ", "\n").replaceAll("<a.+>&gt;&gt;([0-9]{1,4})</a>", "&gt;&gt;$1"));
+        		res.setId(m.group(5));
+        		res.setHonbun(m.group(7).replaceAll("<br> ", "\n").replaceAll("<a.+>&gt;&gt;([0-9]{1,4})</a>", "&gt;&gt;$1"));
         		resList.add(res);
         		
         		//本文に通販URL含まれていたらスクレイピング
-        		Matcher amaM = amaP.matcher(m.group(6));
-        		while(amaM.find()){
-        			tokkaUrlList.add("www.amazon.co.jp/dp/" + amaM.group(1));
-        		}
+//        		Matcher amaM = amaP.matcher(m.group(6));
+//        		while(amaM.find()){
+//        			tokkaUrlList.add("www.amazon.co.jp/dp/" + amaM.group(1));
+//        		}
         	}
 		}
-        List<Tokka> tokkaList = createTokkaList(tokkaUrlList);
-        
+        //List<Tokka> tokkaList = createTokkaList(tokkaUrlList);
         //差分更新と新着更新の場合で分ける
         if(dat.getResList() != null) dat.getResList().addAll(resList);
         else dat.setResList(resList);
-        if(dat.getTokkaList() != null) dat.getTokkaList().addAll(tokkaList);
-        else dat.setTokkaList(tokkaList);
+//        if(dat.getTokkaList() != null) dat.getTokkaList().addAll(tokkaList);
+//        else dat.setTokkaList(tokkaList);
         return;
     }
     
@@ -322,17 +321,17 @@ public class DatController {
 			List<Tokka> newTokkaList = new ArrayList<>();
 			for (Element item : document.select("Item")) {
 				Tokka tokka = new Tokka();
-				tokka.setId("www.amazon.co.jp/dp/" + item.select("asin").text());
 				try{
+					tokka.setId("www.amazon.co.jp/dp/" + item.select("asin").text());
 					tokka.setPrice(Integer.parseInt(item.select("ItemAttributes > ListPrice > Amount").text()));
-				} catch (NumberFormatException e) {
-					logger.warn("価格取得できない {}", item);
-					tokka.setPrice(0);
+					tokka.setTitle(item.select("ItemAttributes > Title").text());
+					tokka.setImgUrl(item.select("> SmallImage > URL").first().text());
+					tokka.setSiteName("amazon");
+					tokkaList.add(tokka);
+				} catch (NumberFormatException | NullPointerException e) {
+					e.printStackTrace();
+					logger.error("amazonでエラー {}", item);
 				}
-				tokka.setTitle(item.select("ItemAttributes > Title").text());
-				tokka.setImgUrl(item.select("> SmallImage > URL").first().text());
-				tokka.setSiteName("amazon");
-				tokkaList.add(tokka);
 				newTokkaList.add(tokka);
 				logger.info("amazonから商品情報取得 {}", tokka);
 			}

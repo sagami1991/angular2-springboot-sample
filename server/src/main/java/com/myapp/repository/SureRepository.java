@@ -32,7 +32,7 @@ public class SureRepository {
 	}
 	
 	public void upsertBatch(List<Sure> sures) {
-		if(sures == null || sures.size() < 1) new RuntimeException("スレなし");
+		if(sures == null || sures.size() < 1) throw new RuntimeException("スレなし");
 		String boardId = sures.get(0).getBid();
 		List<String> datNoList = new ArrayList<>();
 		for (Sure sure : sures) {

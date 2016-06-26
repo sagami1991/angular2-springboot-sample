@@ -9,10 +9,10 @@ const numeral = require("numeral");
 	<div class="header">
 		<div class="title">サーバー情報</div>
 	</div>
-	<table *ngIf="debug" class="table">
+	<table class="table">
 		<tr *ngFor="let item of debugPrefix">
 			<td>{{item.label}}</td>
-			<td>{{debug[item.prop] | numberFormat:item.format}}  {{item.suffix}}</td>
+			<td>{{item.value | numberFormat:item.format}}  {{item.suffix}}</td>
 		</tr>
 	</table>
 	`,
@@ -22,36 +22,48 @@ export class DebugComponent {
 	private debug; //: DebugInfo;
 	private debugPrefix = [
 		{
+			prop: "version",
+			label: "更新日時",
+			suffix: "",
+			value: VERSION
+		},
+		{
 			prop: "osName",
 			label: "OS",
-			suffix: ""
+			suffix: "",
+			value: null
 		},
 		{
 			prop: "totalMem",
 			label: "合計メモリ",
 			suffix: "MB",
-			format: "0,0"
+			format: "0,0",
+			value: null
 		},
 		{
 			prop: "useMem",
 			label: "使用メモリ",
 			suffix: "MB",
-			format: "0,0"
+			format: "0,0",
+			value: null
 		},
 		{
 			prop: "perMem",
 			label: "メモリ使用率",
-			suffix: "%"
+			suffix: "%",
+			value: null
 		},
 		{
 			prop: "totalSpace",
 			label: "合計容量",
-			suffix: "GB"
+			suffix: "GB",
+			value: null
 		},
 		{
 			prop: "freeSpace",
 			label: "空き容量",
-			suffix: "GB"
+			suffix: "GB",
+			value: null
 		}
 	];
 	constructor(private http: Http) {};
@@ -62,7 +74,9 @@ export class DebugComponent {
 		this.http.get(`api/setting/debug`)
 		.map(res => res.json())
 		.subscribe(data => {
-			this.debug = data;
+			_.each(this.debugPrefix, (obj) => {
+				if (!obj.value) obj.value = data[obj.prop];
+			});
 		});
 	}
 }

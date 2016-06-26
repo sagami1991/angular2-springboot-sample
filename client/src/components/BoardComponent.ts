@@ -2,7 +2,7 @@ import {Component} from "@angular/core";
 import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
 import {Sure, Board} from "../interfaces";
 import {Http} from "@angular/http";
-import {EmojiPipe, DeleteTensaiPipe, stopLoading, errorHandler, DateFormatPipe, NumberFormatPipe}
+import {stopLoading, errorHandler, DateFormatPipe, NumberFormatPipe, ConvertUtil}
 	from "../util/Util";
 
 @Component({
@@ -17,15 +17,15 @@ import {EmojiPipe, DeleteTensaiPipe, stopLoading, errorHandler, DateFormatPipe, 
 		{{board.name}}
 	</h2>
 	<div class="sort-area">
-		<button class="btn btn-default" [class.btn-primary]="sort[0].attr"
+		<button class="btn btn-default" [class.active]="sort[0].attr"
 			(click)="doSort('ikioi')">勢い</button>
-		<button class="btn btn-default" [class.btn-primary]="sort[1].attr"
+		<button class="btn btn-default" [class.active]="sort[1].attr"
 			(click)="doSort('date')">新しい</button>
 	</div>
 	<ul *ngIf="sures">
 		<li *ngFor="let sure of sures" class="sure-row">
 			<div class="suretai" face="symbol">
-				<a [routerLink]="['/Sure', {id: sure.id}]" [innerHTML]="sure.suretai | delTensai | toEmoji"></a>
+				<a [routerLink]="['/Sure', {id: sure.id}]" [innerHTML]="sure.suretai"></a>
 			</div>
 			<div class="sub">
 				<div class="hiduke">{{sure.date | dateToString}}</div>
@@ -39,7 +39,7 @@ import {EmojiPipe, DeleteTensaiPipe, stopLoading, errorHandler, DateFormatPipe, 
 	`,
 	styles: [require("./board.scss")],
 	directives: [ROUTER_DIRECTIVES],
-	pipes: [EmojiPipe, DeleteTensaiPipe, DateFormatPipe, NumberFormatPipe]
+	pipes: [DateFormatPipe, NumberFormatPipe]
 })
 export class BoardComponent {
 	private sort = [
@@ -79,8 +79,11 @@ export class BoardComponent {
 	private convertSures() {
 		let ikioiAve = 0;
 		for (let sure of this.sures) {
+			sure.suretai = ConvertUtil.emoji(ConvertUtil.delTensai(sure.suretai));
 			sure.date = new Date(Number(sure.datNo) * 1000);
-			sure.ikioi = sure.length / (new Date().getTime() - sure.date.getTime() ) * 1000 * 3600 * 24;
+			let deltaTime = new Date().getTime() - sure.date.getTime();
+			deltaTime = deltaTime < 1000 ? 1000 : deltaTime;
+			sure.ikioi = sure.length / deltaTime * 1000 * 3600 * 24;
 			ikioiAve += sure.ikioi;
 		}
 

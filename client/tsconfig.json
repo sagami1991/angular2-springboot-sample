@@ -5,9 +5,13 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true 
     },
-    "files": [
+    "filesGlob": [
         "typings/index.d.ts",
 				"src/custom-typings.d.ts",
         "src/main.ts"
-    ]
+    ],
+		"awesomeTypescriptLoaderOptions": {
+    "resolveGlobs": true,
+    "forkChecker": true
+  }
 }

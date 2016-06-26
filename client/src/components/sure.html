@@ -1,31 +1,40 @@
 <div class="header">
 	<div class="title">スレ</div>
 	<div class="func-area" *ngIf="board">
-		<a [routerLink]="['/Board', {id: board.id}]" class="glyphicon glyphicon-arrow-left"></a>
-		<a (click)="getSabun()" class="glyphicon glyphicon-refresh"></a>
+		<button [routerLink]="['/Board', {id: board.id}]" class="cercle-button">
+			<i class="material-icons md-36">keyboard_backspace</i>
+		</button>
+		<button (click)="getSabun()" class="cercle-button">
+			<i class="material-icons md-36">cached</i>
+		</button>
 	</div>
 </div>
 
 <div *ngIf="board">
-	<h3 [innerHTML]="dat.title + '(' + dat.resList.length + ')' | toEmoji"></h3>
+	<h3 [innerHTML]="dat.title + '(' + dat.resList.length + ')'"></h3>
 	<div class="filter-button-area">
 		<button *ngFor="let myFilter of filters"
-		 class="btn btn-default" [class.btn-primary]="myFilter.enable"
-			(click)="toggleFilter(myFilter)">{{myFilter.label}}</button>
+		 class="btn btn-default" [class.active]="myFilter.enable"
+			(click)="toggleFilter(myFilter)">{{myFilter.label}}{{myFilter.state}}</button>
 	</div>
-	<div *ngFor="let res of dat.resList | resFilter:filterType" class="res-wrapper">
+	<div id="test">
+	<div *ngFor="let res of dat.resList | resFilter:nowFilterType"
+	 class="res-wrapper">
 		<div class="res-header">
-			<a class="res-no {{getResColor(res.fromAnkers)}}"
-				(click)="showResByIndexes(res.fromAnkers)">{{res.index + 1}}{{getResNoState(res.fromAnkers)}}</a>
+			<a class="res-no {{res.noColor}}"
+				(click)="showResByIndexes(res.fromAnkers)">
+				{{res.index + 1}}{{res.ankerCount}}
+			</a>
 			<span class="res-name">名前: {{board.defaultName}}</span>
 			<span class="res-postdate">{{res.postDate}}</span>
-			<a class="res-id {{getIdColor(res.id)}}"
+			<a class="res-id {{res.idColor}}"
 				(click)="showResById(res.id)">
-					ID: {{res.id}} {{getIdstate(res.id, res.index)}}
+					ID:{{res.id}} {{res.idCount}}
 				</a>
 		</div>
-		<div class="res-body" [innerHTML]="res.honbun"
-		 (click)="showAnkerTo($event, res.index)">
+		<div class="res-body"
+			[innerHTML]="res.honbun"
+			(click)="showAnkerTo($event, res.index)">
 		</div>
 		<div class="thumbs-wrapper" *ngFor="let thumb of res.thumbs">
 				<a *ngFor="let thumb of res.thumbs" class="thumb-box" href="http://{{thumb.id}}" target="_blank">
@@ -36,5 +45,6 @@
 					</ul>
 				</a>
 		</div>
+	</div>
 	</div>
 </div>

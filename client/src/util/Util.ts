@@ -31,30 +31,20 @@ export class DateFormatPipe implements PipeTransform {
 	}
 }
 
-/**  転載禁止削除 */
-@Pipe({name: 'delTensai'})
-export class DeleteTensaiPipe implements PipeTransform {
-	transform(str: string, args:string[]) : any {
-		return str.replace(" [無断転載禁止]&#169;2ch.net", "");
-	}
-}
 
-/**
- * &#****; みたいな文字を絵文字画像タグに変換する
- * タグを返すので{{}}ではなくinnerHtmlを使用
- */
-@Pipe({name: 'toEmoji'})
-export class EmojiPipe implements PipeTransform {
-	transform(text: string, args:string[]) : any {
-		return emojione.unicodeToImage(this.conv(text));
+/** 文章渡すと$#xxxxxの文字を絵文字の画像タグに変換 */
+export class ConvertUtil {
+	public static delTensai(str: string) {
+		return str.replace(/(\[無断転載禁止\])?&#169;2ch.net/, "");
 	}
-	//#&～～～みたいな文字を無理やり絵文字にする
-	private conv(str: string) {
-		//エスケープはしない
-		return str.replace(/&#([0-9]{1,7});/g, (matchstr, parens) => this.decode(Number(parens))); 
+	
+	public static emoji(text: string) {
+		return text.replace(/&(amp;)?#([0-9]{1,7});/g, (matchstr, dammy, parens) => {
+			return emojione.unicodeToImage(this.decode(Number(parens)));
+		});
 	}
 
-	private decode ( n: number ) {
+	private static decode ( n: number ): string {
 		if (n <= 0xFFFF) {
 			return String.fromCharCode(n);
 		}	else if (n <= 0x10FFFF) {
@@ -64,6 +54,7 @@ export class EmojiPipe implements PipeTransform {
 			return "[error:絵文字パースできない]";
 		}
 	}
+
 }
 
 //子からルーターへイベント発火させる方法わからないのでセレクタで対処

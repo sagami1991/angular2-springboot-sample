@@ -1,69 +1,79 @@
-import {Component} from "@angular/core";
+import {Component, ChangeDetectorRef} from "@angular/core";
 import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
 import {Sure, Board, Dat, Res, Tokka} from "../interfaces";
 import {Http, URLSearchParams} from "@angular/http";
 import {Pipe, PipeTransform} from '@angular/core';
-import {EmojiPipe, errorHandler, stopLoading, NumberFormatPipe} from "../util/Util";
+import {errorHandler, stopLoading, NumberFormatPipe, ConvertUtil} from "../util/Util";
 const toastr = require('toastr/toastr');
+
 
 @Pipe({name: "resFilter"})
 class ResFilter implements PipeTransform {
-	transform(resList: Res[], filterType:string) : Res[] {
-		switch (filterType) {
-			case "shop":
-				return resList.filter(res => res.thumbs.length > 0);
-			case "image":
-				return resList.filter(res => 
-					new RegExp("\h?ttps?:\/\/[^\s]+\.(png|gif|jpg|jpeg)", "i").exec(res.honbun) !== null
-				);
-			case "popular":
-				return resList.filter(res => res.fromAnkers.length > 2);
-			default:
-				return resList;
+	transform(resArr: Res[], fType: string):  Res[] {
+		let returnArr: Res[];
+		switch (fType) {
+		case "shop":
+			returnArr = resArr.filter(res => res.thumbs.length > 0);
+			break;
+		case "image":
+			returnArr = resArr.filter(res => /\h?ttps?:\/\/[^\s]+\.(png|gif|jpg|jpeg)/.test(res.honbun));
+			break;
+		case "popular":
+			returnArr = resArr.filter(res => res.fromAnkers.length > 2);
+			break;
+		default:
+			return resArr;
 		}
+		return returnArr;
 	}
 }
-
 
 @Component({
 	template:require("./sure.html"),
 	styles: [require("./sure.scss")],
 	directives: [ROUTER_DIRECTIVES],
-	pipes: [EmojiPipe, NumberFormatPipe, ResFilter]
+	pipes: [NumberFormatPipe, ResFilter]
 })
 export class SureComponent {
 	private board: Board;
 	private sure: Sure;
 	private dat: Dat;
 	private humanIds: {[key:string]:HumanId};
-	private filterType: string;
+	//絵文字にエンコード
+	private nowFilterType: string;
+	private isComplete: boolean;
 	private filters: MyFilter[] = [
 		{
 			label: "人気",
 			type: "popular",
+			state:"",
 			enable: false
 		},
 		{
 			label: "画像",
 			type: "image",
+			state:"",
 			enable: false
 		}, {
 			label: "特価",
 			type: "shop",
+			state:"",
 			enable: false
 		}
 	];
-	constructor(private params: RouteParams,
+	constructor(private ref: ChangeDetectorRef,
+							private params: RouteParams,
 							private http: Http) {};
 
 	private ngOnInit() {
 		this.humanIds = {};
-		this.filterType = "";
-
 		stopLoading(false);
 		this.http.get(`api/dat/sid/${this.params.get("id")}`)
 		.map(res => res.json())
-		.finally(() => stopLoading(true))
+		.finally(() => {
+			stopLoading(true);
+			this.isComplete = true;
+		})
 		.subscribe(data => {
 			this.board = (<any>data).board;
 			this.sure = (<any>data).sure;
@@ -71,16 +81,15 @@ export class SureComponent {
 			if (this.dat.otiteru) toastr.error("dat落ち");
 			const name = this.board.defaultName;
 			this.board.defaultName = name ? name.replace("＠無断転載禁止", "") : "";
+			this.dat.title = ConvertUtil.emoji(this.dat.title);
 			this.convertRes(this.dat.resList, 0);
 		}, e => errorHandler(e));
 	}
 
 	/** フィルターを切り替える */
-	private toggleFilter(argfilter: MyFilter) {
-		_.each(this.filters, (filter) => {
-			filter.enable = filter.type === argfilter.type ? !argfilter.enable : false;
-		});
-		this.filterType = argfilter.enable ? argfilter.type : "";
+	private toggleFilter(argfilter: MyFilter):void {
+		_.each(this.filters, f => { f.enable = argfilter.type === f.type ? !f.enable : false; });
+		this.nowFilterType = argfilter.enable ? argfilter.type : "";
 	}
 
 	/** 差分更新を行う（右上の更新アイコン） */
@@ -117,7 +126,8 @@ export class SureComponent {
 			res.honbun = res.honbun.replace(/h?(ttps?:\/\/[^\s]+)/g, (url, $1: string) => {
 				return `<a href="h${$1}" target="_blank">h${$1}</a>`;
 			});
-
+			//絵文字化
+			res.honbun = ConvertUtil.emoji(res.honbun);
 			// サムネイルリスト作成
 			res.thumbs = [];
 			// const reg = new RegExp("https?:\/\/www\.amazon\.co\.jp.+?(B0........)", "g");
@@ -131,22 +141,25 @@ export class SureComponent {
 			// }
 			if(start !== 0) this.dat.resList.push(res);
 		});
+
+		//全てのレスに対して処理をかける
+		_.each(this.dat.resList, (res, i) => {
+			const ankeredCount =  res.fromAnkers.length;
+			res.ankerCount = ankeredCount ? `(${ankeredCount})` : "";
+			res.noColor = 
+				ankeredCount >= 3 ? "red" :
+				ankeredCount >= 1 ? "blue" :
+														"normal";
+			const resArr = this.humanIds[res.id].resIdxes;
+			res.idCount = resArr ? `(${resArr.indexOf(i) + 1}/${resArr.length})` : "";
+			res.idColor =
+				resArr.length >= 5 ? "red" :
+				resArr.length >= 2 ? "blue" :
+														"normal";
+													
+		});
 	}
 
-	private getIdColor(id: string) {
-		const idResCount = this.humanIds[id].resIdxes.length;
-		if (idResCount >= 5) return "red";
-		else if (idResCount >= 2) return "blue";
-		else 	return "normal";
-	}
-	private getIdstate(id:string, index:number) {
-		if (this.humanIds[id].resIdxes.length === 1) return "";
-		return `(${this.humanIds[id].resIdxes.indexOf(index) + 1}/${this.humanIds[id].resIdxes.length})`
-	}
-
-	private getResNoState(ankeredIdxes: number[]) {
-		return ankeredIdxes.length === 0 ? "" : `(${ankeredIdxes.length})`;
-	}
 
 	private showResById(id: string) {
 		alert(`todo このIDのレス番 ${JSON.stringify(this.humanIds[id])}`);
@@ -165,16 +178,6 @@ export class SureComponent {
 		if (!ankerToStr || ankerToNum > nowIdx) return;
 		alert(`todo アンカー先のレス番 ${ankerToNum}`) 
 	}
-
-	private getResColor(ankeredIdxes: number[]) {
-		const ankeredCount = ankeredIdxes.length;
-		if (ankeredCount >= 3) return "ankered red";
-		else if (ankeredCount >= 1) return "ankered blue";
-		else return ""; 
-		
-	}
-
-
 }
 
 interface HumanId {
@@ -184,5 +187,7 @@ interface HumanId {
 interface MyFilter {
 	label: string;
 	type: string;
+	state: string;
 	enable: boolean;
+
 }

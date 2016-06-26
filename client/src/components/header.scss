@@ -1,4 +1,7 @@
+@import "../_common.scss";
+
 $dark-blue: #F3F3F3;
+$deep-dark: #ddd;
 $blue:#FDFDFD;
 $sidebar-width: 40px;
 //サイドヘッダー
@@ -15,7 +18,7 @@ $sidebar-width: 40px;
 	background-color: $dark-blue;
 	overflow: hidden;
 	&, .genre-wrapeer{
-		transition: width 0.3s linear;
+		transition: width 0.2s linear;
 	}
 
 	.toggle-button{
@@ -26,29 +29,37 @@ $sidebar-width: 40px;
 
 	.genre-wrapeer{
 		text-decoration: none;
-		margin-bottom: 4px;
 		padding: 6px;
 		padding-left: 8px;
 		display: flex;
 		align-items: center;
-		.glyphicon{
+		.material-icons{
 			margin-right: 8px;
 			font-size: 24px;
-			color: darkslategray;
+			color:rgba(51, 51, 51, 0.85);
 		}
 
-		&:hover{
-			background-color: darkslategray;
-			&, .glyphicon{
-				color: white;
+		&:hover, &.router-link-active {
+			&, .material-icons {
+				color:#333;
 			}
+			background-color: $deep-dark;
+		}
+		position: relative;
+		&.router-link-active:after {
+			content: "";
+			height: 100%;
+			width: 4px;
+			background-color: $green;
+			position: absolute;
+			left: 0;
+			top: 0;
 		}
 	}
 	&:not(.active) .genre-text {
 			display: none;
 	}
-	&.active {
-		.genre-wrapeer{		width: 200px;}
+	&.active, &.active .genre-wrapeer {
 		width: 200px;
 	}
 }
@@ -61,6 +72,16 @@ $sidebar-width: 40px;
 	height: 32px;
 	cursor: pointer;
 	&.active, &:hover { background-color: #E0E0E0 }
+	&:not(.active) span {
+			left: 50%;
+			&:nth-child(1){transform: rotate(-45deg);}
+			&:nth-child(2){transform:translateY(calc(50% + 2px)) rotate(45deg);}
+	}
+	&.active span {
+			left: calc(50% - 2px);
+			&:nth-child(1){transform: rotate(45deg);}
+			&:nth-child(2){transform: translateY(calc(50% + 2px)) rotate(-45deg);}
+	}
 	span{
 		position: absolute;
 		display: block;
@@ -69,15 +90,5 @@ $sidebar-width: 40px;
 		height: 16px;
 		background-color: rgba(0,0,0,0.7);
 		transition: all 250ms ease-in-out;
-		&:not(.active) {
-			left: 50%;
-			&:nth-child(1){transform: rotate(-45deg);}
-			&:nth-child(2){transform:translateY(calc(50% + 2px)) rotate(45deg);}
-		}
-		&.active {
-			left: calc(50% - 2px);
-			&:nth-child(1){transform: rotate(45deg);}
-			&:nth-child(2){transform: translateY(calc(50% + 2px)) rotate(-45deg);}
-		}
 	}
 }

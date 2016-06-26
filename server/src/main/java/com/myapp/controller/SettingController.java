@@ -18,6 +18,8 @@ import com.sun.management.OperatingSystemMXBean;
 @RestController
 @RequestMapping("api/setting")
 public class SettingController {
+	public static String osName;
+	
 	@Autowired
 	private SettingRepository repository;
 	
@@ -33,7 +35,7 @@ public class SettingController {
 		DebugInfo info = new DebugInfo();
 		OperatingSystemMXBean system = (OperatingSystemMXBean) ManagementFactory
 				.getOperatingSystemMXBean();
-		info.setOsName(System.getProperty("os.name"));
+		info.setOsName(osName);
 		long totalMem = system.getTotalPhysicalMemorySize();
 		long freeMem = system.getFreePhysicalMemorySize();
 		info.setTotalMem(totalMem / (int)Math.pow(1024, 2));

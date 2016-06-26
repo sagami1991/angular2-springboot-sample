@@ -18,9 +18,12 @@
 .res-id{}
 .red { color: $red }
 .blue{ color: $blue }
-.normal { color: rgb(120,140,155); }
-
+.normal { color: $normal }
+.res-hide {
+	display: none;
+}
 .filter-button-area {
+	margin-bottom: 4px;
 	button { margin-right: 8px;}
 }
 

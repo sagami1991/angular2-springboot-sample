@@ -1,27 +1,37 @@
-
+@import "./_common.scss";
 body {
-	padding-top: 55px;
+	color: #333;
+	font-size: 14px;
 	overflow: visible;
 	font-family: "Hiragino Kaku Gothic ProN","Meiryo";
-}
-
-h1,h2,h3 {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.container {
-	padding-top: 20px;
-	padding-left: 50px;
 }
 
 *{
 	box-sizing: border-box;
 }
-a { cursor: pointer; }
-a, a:hover, a:active{
-	text-decoration: none;
+
+h1,h2,h3 {
+	font-weight: 500;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
+
+h2{ font-size: 30px; }
+.container {
+	margin: 50px 4px 10px 40px;
+	padding: 20px 0 0 10px;
+}
+
+
+a { 
+	color: #337ab7;
+	cursor: pointer; 
+	text-decoration: none;
+	&:focus, &:hover {
+		color: #23527c;
+	}
+}
+
 ul {
 	padding-left: 0;
 	list-style:none;
@@ -58,6 +68,9 @@ $blue:#FDFDFD;
 		a {
 			font-size: 32px;
 			margin-right: 24px;
+		}
+		button {
+			margin-right: 16px;
 		}
 	}
 }
@@ -101,3 +114,118 @@ $blue:#FDFDFD;
 	height: 16px;
 	min-height: 16px;
 }
+
+
+// グーグルアイコン
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url("./img/metarial-icons.woff2") format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+	&.md-36 {
+		font-size: 36px;
+	}
+}
+
+//ボタン
+button {
+	font-family: inherit;
+}
+.btn {
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: 400;
+	text-align: center;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857;
+	border-radius: 4px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	&.btn-default {
+		color: #333;
+		background-color: white;
+		border-color: #ccc;
+		&:hover {
+			background: linear-gradient(#d1ecea, white);
+		}
+	}
+	&.btn-primary {
+		color: white;
+		background-color: $green;
+		border-color: #03756b;
+		&:hover {
+			background-color: #03756b;
+		}
+	}
+	position: relative;
+	&.active {
+		background: linear-gradient(#d1ecea, white);
+	}
+	&.active:after{
+			content: "";
+			position: absolute;
+			height: 3px;
+			width: 100%;
+			background-color: $green;
+			left: 0;
+			bottom: 0;
+	}
+}
+
+//丸ボタン
+.cercle-button {
+	cursor: pointer;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+	border-radius: 50%;
+	color: rgba(255, 255, 255, 0.87059);
+  background-color: $green;
+	width: 46px;
+  height: 46px;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&:hover, &:active {
+		transition: 300ms;
+		background-color: #9c27b0;
+	}
+}
+
+//テーブル
+.table {
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 20px;
+	border-spacing: 0;
+	th, td {
+		padding: 8px;
+		border-top: 1px solid #ddd;
+	}
+}
+
