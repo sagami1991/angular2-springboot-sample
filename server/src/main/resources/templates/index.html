@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
     <meta charset="UTF-8" />
-    <title>Janate - 2ch専用ブラウザ</title>
+    <title>Janate - 2ch専用ブラウザ(開発中)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <base href="/" />
     <link rel="stylesheet" type="text/css" th:href="|//${appConfig.hostName}:3001/init/style.css|" />
@@ -21,5 +21,19 @@
         ga('send', 'pageview');
 
     </script>
+    <!-- Google Tag Manager -->
+	<noscript>
+		<iframe src="//www.googletagmanager.com/ns.html?id=GTM-5B5CFM"
+		height="0" width="0" style="display:none;visibility:hidden">
+		</iframe>
+	</noscript>
+	<script>
+		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		j=d.createElement(s),dl=l!='dataLayer'?'&amp;l='+l:'';j.async=true;j.src=
+		'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-5B5CFM');
+	</script>
+	<!-- End Google Tag Manager -->
 </body>
 </html>

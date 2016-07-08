@@ -1,31 +1,37 @@
 import {Component} from "@angular/core";
-import {RouteParams, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {ActivatedRoute, ROUTER_DIRECTIVES} from "@angular/router";
 import {Sure, Board} from "../interfaces";
 import {Http} from "@angular/http";
-import {stopLoading, errorHandler, DateFormatPipe, NumberFormatPipe, ConvertUtil}
+import {stopLoading, errorHandler, DateFormatPipe, NumberFormatPipe, ConvertUtil, Safe}
 	from "../util/Util";
 
 @Component({
+	selector: ".main-container",
 	template:`
 	<div class="header">
-		<div class="title">スレ一覧</div>
+		<div class="title">{{board?.name}} - {{board?.domain}}</div>
 		<div class="func-area" *ngIf="sures">
-			<a (click)="fetch()" class="glyphicon glyphicon-refresh"></a>
+			<button (click)="fetch()" class="cercle-button tooltip" data-tooltip="更新">
+				<i class="material-icons md-36">refresh</i>
+			</button>
 		</div>
 	</div>
-	<h2 *ngIf="board">
-		{{board.name}}
-	</h2>
 	<div class="sort-area">
-		<button class="btn btn-default" [class.active]="sort[0].attr"
+		<button class="btn btn-default tooltip"
+			[class.active]="sort[0].attr"
+			data-tooltip="勢い順でソートする"
 			(click)="doSort('ikioi')">勢い</button>
-		<button class="btn btn-default" [class.active]="sort[1].attr"
+		<button class="btn btn-default tooltip"
+			[class.active]="sort[1].attr"
+			data-tooltip="スレッドの立った日が新しい順でソートする"
 			(click)="doSort('date')">新しい</button>
 	</div>
 	<ul *ngIf="sures">
 		<li *ngFor="let sure of sures" class="sure-row">
 			<div class="suretai" face="symbol">
-				<a [routerLink]="['/Sure', {id: sure.id}]" [innerHTML]="sure.suretai"></a>
+				<a [routerLink]="['/sure', sure.id]"
+					[innerHTML]="sure.suretai | safe"
+				></a>
 			</div>
 			<div class="sub">
 				<div class="hiduke">{{sure.date | dateToString}}</div>
@@ -39,7 +45,7 @@ import {stopLoading, errorHandler, DateFormatPipe, NumberFormatPipe, ConvertUtil
 	`,
 	styles: [require("./board.scss")],
 	directives: [ROUTER_DIRECTIVES],
-	pipes: [DateFormatPipe, NumberFormatPipe]
+	pipes: [DateFormatPipe, NumberFormatPipe, Safe]
 })
 export class BoardComponent {
 	private sort = [
@@ -54,8 +60,8 @@ export class BoardComponent {
 	];
 	private board: Board;
 	private sures: Sure[];
-	constructor(private params: RouteParams,
-							private http: Http) {};
+	constructor(private route: ActivatedRoute,
+				private http: Http) {};
 
 	private ngOnInit() {
 		this.fetch();
@@ -63,7 +69,7 @@ export class BoardComponent {
 
 	private fetch() {
 		stopLoading(false);
-		this.http.get(`api/sureran/bid/${this.params.get("id")}`)
+		this.http.get(`api/sureran/bid/${this.route.snapshot.params["id"]}`)
 		.map(res => res.json())
 		.finally(() => stopLoading(true))
 		.subscribe(

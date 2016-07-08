@@ -1,4 +1,4 @@
-
+import {SafeHtml} from '@angular/platform-browser';
 
 export interface TeamRank {
 	league: string;
@@ -42,12 +42,13 @@ export interface Res {
 	id: string;
 	honbun: string;
 	//ここから後付
+	trustHonbun: SafeHtml;
 	/** フィルターされても残るようにindex */
 	index: number;
 	/** アンカーされてる先 */
 	fromAnkers: number[];
 	/** サムネイル */
-	thumbs: Tokka[];
+	thumbs: Thumb[];
 	/** IDの色 */
 	idColor: string;
 	/** (4/5)のようなIDの数 */
@@ -65,6 +66,7 @@ export interface Dat {
 	byteLength: number;
 	lastModified: string;
 	title: string;
+	trustTitle: string; // 絵文字化後 todo safehtml型に
 	/** デフォルトの名前 */
 	name: string;
 	/** 最後の更新日 */
@@ -74,12 +76,21 @@ export interface Dat {
 	tokkaList: Tokka[];
 }
 
+export interface Thumb {
+	type: string;
+	isOpen: boolean;
+	info: Tokka | ThumbImg;
+}
+
+export interface ThumbImg {
+	imgUrl: string;
+}
 export interface Tokka {
 	id: string;
-	title: string;
-	price: number;
-	siteName: string;
-	imgUrl: string;
+	title?: string;
+	price?: number;
+	siteName?: string;
+	imgUrl?: string;
 }
 
 

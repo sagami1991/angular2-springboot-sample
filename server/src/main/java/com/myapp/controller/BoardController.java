@@ -40,6 +40,11 @@ public class BoardController {
 	public List<Board> findByNames(@RequestParam("names") String names) {
 		return repository.findByNames(strToList(names));
 	}
+	@RequestMapping("")
+	public List<Board> getAll() {
+		return repository.findAll();
+	}
+	
 	
 	/** デフォルト名前取得するためにsetting.txt取得 */
 	public void fetchDefaultName(Board board) {

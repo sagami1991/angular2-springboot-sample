@@ -3,24 +3,29 @@
 		<span></span>
 		<span></span>
 	</div>
-	<a [routerLink]="['/Home']" class="genre-wrapeer">
-		<i class="material-icons">account_balance</i>
+	<a [routerLink]="['/']" class="genre-wrapeer tooltip tooltip-side" data-tooltip="トップ">
+		<i class="material-icons">home</i>
 		<span class="genre-text">トップ</span>
 	</a>
-	<a class="genre-wrapeer">
-		<i class="material-icons">chrome_reader_mode</i>
-		<span class="genre-text">板（工事中）</span>
+	<a class="genre-wrapeer tooltip tooltip-side"
+		[class.active]="isOpenedWorkSpace"
+		data-tooltip="最近開いたスレ"
+		(click)="openWorkSpace.emit(null)"
+	>
+		<i class="material-icons">history</i>
+		<span class="genre-text">最近開いたスレ</span>
 	</a>
-	<a class="genre-wrapeer">
+	<a [routerLink]="['/boardlist']" class="genre-wrapeer tooltip tooltip-side" data-tooltip="板一覧">
 		<i class="material-icons">assignment</i>
-		<span class="genre-text">スレッド（工事中）</span>
+		<span class="genre-text">板一覧</span>
 	</a>
-		<a [routerLink]="['/Yakiu']" class="genre-wrapeer">
-		<i class="material-icons">poll</i>
-		<span class="genre-text">プロ野球</span>
+
+	<a [routerLink]="['/yakiu']" class="genre-wrapeer tooltip tooltip-side" data-tooltip="プロ野球情報">
+		<i class="material-icons">show_chart</i>
+		<span class="genre-text">プロ野球情報</span>
 	</a>
-	<a [routerLink]="['/Debug']" class="genre-wrapeer">
-		<i class="material-icons">bug_report</i>
+	<a [routerLink]="['/debug']" class="genre-wrapeer tooltip tooltip-side" data-tooltip="サーバー情報">
+		<i class="material-icons">info_outline</i>
 		<span class="genre-text">サーバー情報</span>
 	</a>
 </div>

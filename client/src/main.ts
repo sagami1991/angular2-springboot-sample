@@ -1,4 +1,3 @@
-
 //angular2に必要
 import 'core-js/es6/symbol';
 import 'core-js/es6/object';
@@ -24,62 +23,97 @@ import "zone.js/dist/zone";
 
 // lodashを_でgrobalに
 require('expose?_!lodash/core');
-//emoji-one
+require("expose?humane!humane-js");
+require("!style!css!humane-js/themes/libnotify.css");
+//絵文字用ライブラリ　ただ画像タグ化するだけの割にサイズ巨大、小さくするの検討
 require('expose?emojione!emojione/lib/js/emojione');
 require("!style!css!emojione/assets/css/emojione.css");
 emojione.imageType = 'svg';
 emojione.imagePathSVG = PABLICPATH + "emojione/assets/svg/";
+//jqueryとbootstrap削除する方針
 //jqueryを$とjQueryでgrobal変数に
 // require("expose?$!expose?jQuery!jquery");
 // bootstrap
 // require('bootstrap-loader');
-require('!style!css!toastr/build/toastr.css');
+
+
 // css scssローダーでcssへ→cssローダー→styleローダーでstyleタグへ
 require("!style!css!sass!./main.scss");
 
 //angular2
 import {Component, enableProdMode} from '@angular/core';
 import {HTTP_PROVIDERS} from '@angular/http';
-import {bootstrap}    from '@angular/platform-browser-dynamic';
-import {ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {Title} from '@angular/platform-browser';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+import {provideRouter, RouterConfig, ROUTER_DIRECTIVES} from "@angular/router";
 
 //ページ
 import {Header} from "./components/Header";
 import {Home} from "./components/Home";
+import {BoardListComponent} from "./components/BoardListComponent";
 import {BoardComponent} from "./components/BoardComponent";
 import {SureComponent} from "./components/SureComponent";
 import {DebugComponent} from "./components/DebugComponent";
 import {YakiuComponent} from "./components/YakiuComponent";
+import {WorkSpaceComponent} from "./components/WorkSpaceComponent";
+import {WorkSpaceService} from "./util/Util";
 
 if (ENV === "prod") {
 	enableProdMode();
 } else {
-//	require('zone.js/dist/long-stack-trace-zone');
+	require('zone.js/dist/long-stack-trace-zone');
 }
 
-/** 始まりのクラス？ */
+/** 始まりのクラス */
 @Component({
 	selector: 'my-app',
-	template: require("./main.html"),
-	directives: [ROUTER_DIRECTIVES, Header],
+	template: `
+		<app-header
+			(openWorkSpace)="onOpenWorkSpace()"
+			[isOpenedWorkSpace]="isOpenedWorkSpace"
+		>
+		</app-header>
+		<div class="container" [class.exist-workspace]="isOpenedWorkSpace">
+			<div class="workspace" *ngIf="isOpenedWorkSpace">
+				ここがワークスペース
+			</div>
+			<router-outlet id="router">
+			</router-outlet>
+		</div>
+	`,
+	directives: [ROUTER_DIRECTIVES, Header, WorkSpaceComponent],
+	precompile:[Home, BoardComponent, SureComponent, YakiuComponent,
+				DebugComponent, BoardListComponent],
+	providers: [WorkSpaceService]
 })
-// ルート設定
-@RouteConfig([
-	{path: '/', name:"Home", component: Home},
-	{path: '/sureran/:id', name:"Board", component: BoardComponent},
-	{path: '/sure/:id', name:"Sure", component: SureComponent},
-	{path: '/yakiu', name:"Yakiu", component: YakiuComponent},
-	{path: '/debug', name:"Debug", component: DebugComponent},
-])
 export class RootComponent {
+	private isOpenedWorkSpace: boolean;
 	private ngOnInit() {
 		document.querySelector(".loading").removeAttribute("class");
+		this.onOpenWorkSpace();
 	}
-
+	private onOpenWorkSpace() {
+		this.isOpenedWorkSpace = !this.isOpenedWorkSpace;
+	}
 }
+// ルート設定
+const routes: RouterConfig = [
+	{path: '',  component: Home},
+	{path: 'sureran/:id', component: BoardComponent},
+	{path: 'sure/:id', component: SureComponent},
+	{path: 'yakiu', component: YakiuComponent},
+	{path: 'debug', component: DebugComponent},
+	{path: 'boardlist', component: BoardListComponent},
+];
+
+
 
 /** 描写？ */
 bootstrap(RootComponent, [
-	ROUTER_PROVIDERS,
-	HTTP_PROVIDERS
+	provideRouter(routes),
+	HTTP_PROVIDERS,
+	Title
 ]);
+
+//GoogleAnaliticsエラーハンドラ
+

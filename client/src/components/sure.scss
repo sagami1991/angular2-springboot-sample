@@ -1,5 +1,8 @@
 @import "../_common.scss";
-.res-wrapper{
+.suretai {
+	margin-bottom: 5px;
+}
+.res-wrapper {
 	padding: 10px 0px;
 	border-bottom: 1px solid $white-gray;
 	&:first-of-type {
@@ -35,9 +38,21 @@
 		position: relative;
 		border: 1px solid #D4CFCF;
 		margin-right: 10px;
+		&:not(.opened) {
+			width: 30px;
+			height: 30px;
+		}
+		&.opened {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: black;
+			min-width: 100px;
+			min-height: 100px;
+		}
 		img {
-			min-height: 80px;
-			min-width: 80px;
+			max-width: 100px;
+			max-height: 100px;
 		}
 		&:hover {
 			.thumb-tooltip {
@@ -55,6 +70,7 @@
 			background-color: rgba(255, 255, 255, 0.8);
 			left:0;
 			top:0;
+			z-index: 30;
 			.thumb-title{
 				overflow: hidden;
 				white-space: nowrap;
@@ -64,8 +80,33 @@
 	}
 
 }
+//ポップアップなレス
+.popup-wrapper {
+	z-index: 2; //TODO z-indexは一箇所で管理する
+    top: 60px;
+	max-height: calc(100% - 150px);
+	overflow-y: auto;
+    position: fixed;
+	border-top: 1px solid #c7c7c7;
+	border-bottom: 1px solid #c7c7c7;
+	box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5);
+}
+.res-popup {
+	border: 1px solid #c7c7c7;
+    background-color: white;
+	padding: 10px;
+	&:not(:first-of-type) {
+		margin-top: -1px;
+	}
+	&:first-of-type {
+		border-top: none;
+	}
+	&:last-of-type {
+		border-bottom: none;
+	}
+}
 
 @keyframes show{
-		from{opacity: 0;}
-		to{opacity: 1;}
+	from{opacity: 0;}
+	to{opacity: 1;}
 }

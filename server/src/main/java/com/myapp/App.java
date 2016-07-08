@@ -23,7 +23,8 @@ public class App extends SpringBootServletInitializer {
         SpringApplication.run(App.class, args);
     }
 
-    @Bean
+    @SuppressWarnings("deprecation")
+	@Bean
     Mongo mongo() throws Exception {
         return new Mongo("localhost");
     }

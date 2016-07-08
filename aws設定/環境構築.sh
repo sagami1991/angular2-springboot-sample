@@ -35,5 +35,10 @@ forever start app.js -u mongo -p majidesuzo
 
 #立ち上げ系
 sudo nginx
+# mongoDBの立ち上げでハマったら まずログ見る/var/log/mongodb/mongod.log
+# /tmp/mongodb-27017.sock を削除したら治る可能性ある
 sudo service mongod start
+#デプロイ系
+ps -aux | grep java
 nohup java -jar -Dspring.profiles.active=prod 2ch-0.0.1-SNAPSHOT.jar &
+tail -f nohup.out

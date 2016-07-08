@@ -1,3 +1,4 @@
+/// <reference path="typings/globals/webpack/index.d.ts" />
 
 /**
  * 以下のコピペ

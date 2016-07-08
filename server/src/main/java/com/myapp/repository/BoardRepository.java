@@ -32,6 +32,11 @@ public class BoardRepository {
 				);
 	}
 	
+	/** 全て取得 */
+	public List<Board> findAll() {
+		return mongo.findAll(Board.class, collection);
+	}
+	
 	/** 板の名前で検索 */
 	public List<Board> findByNames(List<String> nameList) {
 		return mongo.find(query(where("name").in(nameList)), Board.class, collection);

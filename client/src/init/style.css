@@ -1,10 +1,12 @@
+/** 本体js読み込み中のローディング画面のためのcss */
+
 body {
 	margin: 0;
 }
 
 .loading:after{
     border-radius: 50%;
-    border-width: 10px;
+    border-width: 2px;
     border-style: solid;
     border-color: #00897b;
     border-right-color: transparent;

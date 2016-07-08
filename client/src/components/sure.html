@@ -1,50 +1,59 @@
 <div class="header">
-	<div class="title">スレ</div>
+	<div class="title"
+	 [innerHTML]="headerTitle ? headerTitle : '読み込み中...' | safe"
+	></div>
 	<div class="func-area" *ngIf="board">
-		<button [routerLink]="['/Board', {id: board.id}]" class="cercle-button">
-			<i class="material-icons md-36">keyboard_backspace</i>
+		<button class="cercle-button tooltip" data-tooltip="一番下へ移動"
+		(click)="scroll('bottom')">
+			<i class="material-icons md-36">arrow_downward</i>
 		</button>
-		<button (click)="getSabun()" class="cercle-button">
-			<i class="material-icons md-36">cached</i>
+		<button class="cercle-button tooltip" data-tooltip="一番上へ移動"
+		(click)="scroll('top')">
+			<i class="material-icons md-36">arrow_upward</i>
+		</button>
+		<button [routerLink]="['/sureran', board.id]" class="cercle-button tooltip" data-tooltip="スレ一覧へ戻る">
+			<i class="material-icons md-36">undo</i>
+		</button>
+		<button (click)="getSabun()" class="cercle-button tooltip" data-tooltip="更新">
+			<i class="material-icons md-36">refresh</i>
 		</button>
 	</div>
 </div>
 
-<div *ngIf="board">
-	<h3 [innerHTML]="dat.title + '(' + dat.resList.length + ')'"></h3>
+<div *ngIf="board" class="sure-area">
+	<div class="suretai" [innerHTML]="headerTitle | safe">
+	</div>
 	<div class="filter-button-area">
 		<button *ngFor="let myFilter of filters"
-		 class="btn btn-default" [class.active]="myFilter.enable"
-			(click)="toggleFilter(myFilter)">{{myFilter.label}}{{myFilter.state}}</button>
+		 class="btn btn-default tooltip"
+		 [class.active]="myFilter.enable"
+		 (click)="toggleFilter(myFilter)"
+		 [attr.data-tooltip]="myFilter.tooltip"
+		>
+		 	{{myFilter.label}}{{myFilter.state}}
+		</button>
 	</div>
-	<div id="test">
+	<!-- レスリスト -->
 	<div *ngFor="let res of dat.resList | resFilter:nowFilterType"
-	 class="res-wrapper">
-		<div class="res-header">
-			<a class="res-no {{res.noColor}}"
-				(click)="showResByIndexes(res.fromAnkers)">
-				{{res.index + 1}}{{res.ankerCount}}
-			</a>
-			<span class="res-name">名前: {{board.defaultName}}</span>
-			<span class="res-postdate">{{res.postDate}}</span>
-			<a class="res-id {{res.idColor}}"
-				(click)="showResById(res.id)">
-					ID:{{res.id}} {{res.idCount}}
-				</a>
-		</div>
-		<div class="res-body"
-			[innerHTML]="res.honbun"
-			(click)="showAnkerTo($event, res.index)">
-		</div>
-		<div class="thumbs-wrapper" *ngFor="let thumb of res.thumbs">
-				<a *ngFor="let thumb of res.thumbs" class="thumb-box" href="http://{{thumb.id}}" target="_blank">
-					<img src="{{thumb.imgUrl}}" />
-					<ul class="thumb-tooltip">
-						<li class="thumb-title">{{thumb.title}}</li>
-						<li class="thumb-price">￥ {{thumb.price | numberFormat:'0,0'}}</li>
-					</ul>
-				</a>
-		</div>
+	class="res-wrapper"
+	[res]="res" 
+	[humanIds]="humanIds"
+	(popup)="onPopup($event)"
+	>
 	</div>
+
+	<!-- ポップアップレス -->
+	<div *ngFor="let popupReses of popupReseses; let i=index"
+		class="popup-wrapper"
+		[style.top]="60 + i*10 + 'px'"
+	>
+		<div *ngFor="let popupRes of popupReses"
+			class="res-popup res-wrapper"
+			[style.margin-left]="popupRes.nest*10 + 'px'"
+			[res]="popupRes.res"
+			[humanIds]="humanIds"
+			(popup)="onPopup($event)"
+		>
+		</div>
 	</div>
 </div>

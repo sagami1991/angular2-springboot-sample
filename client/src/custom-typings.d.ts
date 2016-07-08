@@ -10,6 +10,10 @@ declare module emojione {
 	var imagePathSVG: string;
 	function unicodeToImage(unicode: string): string;
 }
+declare module humane{
+	function remove();
+	function spawn({addnCls: string, timeout: number}) :(msg: string)=> void;
+}
 
 //googleアナリティクス
 declare var ga: any;

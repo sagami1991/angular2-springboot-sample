@@ -1,3 +1,4 @@
+/// <reference path="typings/globals/webpack/index.d.ts" />
 
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');

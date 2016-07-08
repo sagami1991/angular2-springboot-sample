@@ -1,4 +1,7 @@
 @import "./_common.scss";
+html, body {
+	height: 100%;
+}
 body {
 	color: #333;
 	font-size: 14px;
@@ -18,10 +21,37 @@ h1,h2,h3 {
 
 h2{ font-size: 30px; }
 .container {
-	margin: 50px 4px 10px 40px;
-	padding: 20px 0 0 10px;
+	position: absolute;
+	top: 50px;
+	right: 0;
+	bottom: 0;
+	left: 40px;
+}
+.exist-workspace .main-container{
+	left: 140px;
+}
+.main-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+	padding-top: 8px;
+	padding-left: 8px;
+}
+.workspace {
+	width: 140px;
+	border-right: 1px solid #F3F3F3;;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom:0;
 }
 
+child, undefined {
+	padding: 20px 0 0 10px;
+}
 
 a { 
 	color: #337ab7;
@@ -30,9 +60,13 @@ a {
 	&:focus, &:hover {
 		color: #23527c;
 	}
+	&.default:visited {
+		color: $blue;
+	}
 }
 
 ul {
+	margin: 0;
 	padding-left: 0;
 	list-style:none;
 }
@@ -59,6 +93,9 @@ $blue:#FDFDFD;
 		font-weight: 500;
 		font-size: 24px;
 		margin-left: 20px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 	.func-area{
 		margin-left: auto;
@@ -138,8 +175,18 @@ $blue:#FDFDFD;
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 	&.md-36 {
 		font-size: 36px;
+	}
+	&.md-16 {
+		font-size: 16px;
+	}
+	&.md-12 {
+		font-size: 12px;
 	}
 }
 
@@ -186,7 +233,7 @@ button {
 	&.active {
 		background: linear-gradient(#d1ecea, white);
 	}
-	&.active:after{
+	&.active:before{
 			content: "";
 			position: absolute;
 			height: 3px;
@@ -229,3 +276,45 @@ button {
 	}
 }
 
+
+//ツールチップ
+.tooltip {
+	position: relative;
+	&:hover:after{
+		display: inline-block;
+		font-size: 12px;
+		content: attr(data-tooltip);
+		background-color: rgba(0,0,0,0.8);
+		color: #fff;
+		text-align: center;
+		padding: 5px 8px;
+		border-radius: 6px;
+		position: absolute;
+		word-wrap: break-word;
+		white-space: pre;
+		z-index: 9999;
+		top: 110%;
+		left: 35%; 
+	}
+	&.tooltip-side:hover:after{
+		top: 10%;
+		left: 105%; 
+	}
+}
+
+.side-header.active .tooltip:after{
+	content: none;
+}
+
+// humane-jsのnotify
+.humane-error {
+	background: linear-gradient(rgba(171, 26, 26, 0.9) 0%, rgba(216, 0, 0, 0.9) 100%) no-repeat;
+}	
+
+.humane-warning {
+	background: linear-gradient(rgba(191, 155, 22, 0.9) 0%, rgba(216, 169, 0, 0.9) 100%) no-repeat;
+}
+
+.humane-success {
+	background: -webkit-linear-gradient(top, rgba(8, 179, 30, 0.9) 0%, rgba(14, 183, 11, 0.9) 100%) no-repeat;
+}

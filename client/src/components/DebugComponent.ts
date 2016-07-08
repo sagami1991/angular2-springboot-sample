@@ -5,6 +5,7 @@ import {NumberFormatPipe} from "../util/Util";
 const numeral = require("numeral");
 
 @Component({
+	selector: ".main-container",
 	template:`
 	<div class="header">
 		<div class="title">サーバー情報</div>

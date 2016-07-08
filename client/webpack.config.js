@@ -1,3 +1,5 @@
+/// <reference path="typings/globals/webpack/index.d.ts" />
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const dateFormat = require('dateformat');
@@ -35,7 +37,7 @@ module.exports = {
       },
 			{ test: /\.html$/, loader: 'raw'},
 			{ test: /\.scss$/, loaders: ["raw","sass"] },
-			{ test: /\.png$/, loader: "url?mimetype=image/png" },
+			{ test: /\.png$/, loader: "url?limit=10000&mimetype=image/png" },
 			//bootstrapのフォント用
 			{
         test: /\.(woff|woff2)$/,
@@ -48,12 +50,13 @@ module.exports = {
       {test: /\.eot$/, loader: 'file'},
       {
         test: /\.svg$/,
-        loader: 'url?limit=10000&mimetype=image/svg+xml'
+        loader: 'url?limit=1000&mimetype=image/svg+xml'
       }
     ]
   },
 	plugins: [
 		new CopyWebpackPlugin([
+			//angular読み込み前に必要なもの
 			{ from: 'src/init', to: 'init' },
 			//絵文字画像コピー
 			{ from: 'node_modules/emojione/assets/svg', to: 'emojione/assets/svg' },
@@ -63,10 +66,10 @@ module.exports = {
 		}),
 	],
 	node: {
-    global: 'window',
-    crypto: 'empty',
-    module: false,
-    clearImmediate: false,
-    setImmediate: false
+		global: 'window',
+		crypto: 'empty',
+		module: false,
+		clearImmediate: false,
+		setImmediate: false
   }
 };

@@ -1,9 +1,8 @@
 package com.myapp.domain.itaran;
 
-import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.List;
+
+import lombok.Data;
 
 /**
  * Created by m on 2016/06/06.

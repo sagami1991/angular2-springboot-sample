@@ -1,0 +1,62 @@
+@import "../_common.scss";
+
+.work-title{
+	padding: 4px;
+	background-color: #fdfdfd;
+	border-bottom: 1px solid #F3F3F3;;
+	text-align: center;
+	&:before {
+		content:"";
+		position: absolute;
+		top:0; left:0;
+		width: 0;
+		height: 0;
+		border-top: 6px solid $green;
+		border-right: 6px solid transparent;
+		border-bottom: 6px solid transparent;
+		border-left: 6px solid $green;
+	}
+}
+.work-wrapper {
+	// padding: 4px 2px 0 0; 
+}
+.li-item {
+	display: flex;
+	align-items: center;
+	font-size: 11px;
+	padding: 2px 0 2px 4px;
+	&:hover, &.active {
+		background-color: #f9f9f9;
+		.li-item-link {
+			color: #333;
+		}
+		&.active:before{
+			content: "";
+			height: 100%;
+			width: 3px;
+			background-color: $green;
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		i {
+			cursor: pointer;
+			visibility: visible;
+			color: gray;
+			&:hover {
+				border-radius: 50%;
+				background-color: #ff4c4c;
+				color: white;
+			}
+		}
+	}
+}
+.li-item-link {
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+}
+i {
+	visibility: hidden;
+	margin-right: 2px;
+}

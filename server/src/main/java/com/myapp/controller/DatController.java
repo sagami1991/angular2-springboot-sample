@@ -186,10 +186,14 @@ public class DatController {
 	}
 	
     @ResponseStatus(value = HttpStatus.NOT_IMPLEMENTED, reason = "dat落ち")
-    private class OtiteruException extends RuntimeException {}
+    private class OtiteruException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+	}
     
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "更新なし")
-    private class NotModifiedException extends RuntimeException {}
+    private class NotModifiedException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+	}
 	
 	/** 差分更新 
 	 * @throws IOException */
@@ -204,6 +208,19 @@ public class DatController {
 		if(dat.isOtiteru()) throw new OtiteruException();
 		if(length == list.size()) throw new NotModifiedException();
 		return list.subList(length, list.size());
+	}
+	
+	/**
+	 * 特価取得
+	 * */
+	@RequestMapping(value = "/tokka")
+	private Tokka fetchTokka(@RequestParam("id") String url,
+			@RequestParam("site") String siteName) {
+		List<String> list = new ArrayList<>();
+		list.add(url);
+		List<Tokka> tokkaList = createTokkaList(list);
+		if(tokkaList == null ) throw new RuntimeException("amazonから取得できない");
+		return tokkaList.get(0);
 	}
 	
 	/** board, sure, datをmapに入れて返す */
@@ -243,9 +260,9 @@ public class DatController {
     /** レスリストと通販リストをdatオブジェクトにセット */
     private void setResAndTokka(Dat dat, String[] datLines) {
 		List<Res> resList = new ArrayList<>();
-		List<String> tokkaUrlList = new ArrayList<>();
+//		List<String> tokkaUrlList = new ArrayList<>();
 		Pattern p = Pattern.compile("^(.*)<>(.*?)<>(.+)\\s(ID:)?(.*)(\\s.*)?<>\\s(.*)<>");
-		Pattern amaP = Pattern.compile("www\\.amazon\\.co\\.jp.+?(B0........)");
+//		Pattern amaP = Pattern.compile("www\\.amazon\\.co\\.jp.+?(B0........)");
         for (String line : datLines) {
     		Matcher m = p.matcher(line);
         	if(m.find()){
@@ -275,7 +292,7 @@ public class DatController {
     @Autowired
     TokkaRepository tokkaRepository;
     
-    /** 特価リストを作る */
+    /** 特価リストを作る  TODO リストをやめて単体に*/
 	private List<Tokka> createTokkaList(List<String> urlList) {
 		//重複削除
 		urlList = new ArrayList<>( new HashSet<>(urlList));
@@ -321,17 +338,16 @@ public class DatController {
 			List<Tokka> newTokkaList = new ArrayList<>();
 			for (Element item : document.select("Item")) {
 				Tokka tokka = new Tokka();
+				tokka.setId("www.amazon.co.jp/dp/" + item.select("asin").text());
 				try{
-					tokka.setId("www.amazon.co.jp/dp/" + item.select("asin").text());
-					tokka.setPrice(Integer.parseInt(item.select("ItemAttributes > ListPrice > Amount").text()));
 					tokka.setTitle(item.select("ItemAttributes > Title").text());
-					tokka.setImgUrl(item.select("> SmallImage > URL").first().text());
-					tokka.setSiteName("amazon");
-					tokkaList.add(tokka);
+					tokka.setPrice(Integer.parseInt(item.select("ItemAttributes > ListPrice > Amount").text()));
+					tokka.setImgUrl(item.select("> SmallImage > URL").text());
 				} catch (NumberFormatException | NullPointerException e) {
-					e.printStackTrace();
-					logger.error("amazonでエラー {}", item);
+					logger.error("amazonでエラー 取れない {}", item.select("ItemAttributes"));
 				}
+				tokka.setSiteName("amazon");
+				tokkaList.add(tokka);
 				newTokkaList.add(tokka);
 				logger.info("amazonから商品情報取得 {}", tokka);
 			}
